@@ -74,7 +74,7 @@ function formatStats({ numNfs, emConting, homolog, semProtAut }: NfStats) {
     `Total de notas fiscais: ${numNfs}`,
     `Notas fiscais emitidas em contingência: ${emConting}`,
     `Notas fiscais emitidas em ambiente de homologação: ${homolog}`,
-    `Notas fiscais omitindo protocolo de autorização: ${semProtAut}`
+    `Notas fiscais com protocolo de autorização omitido: ${semProtAut}`
   ];
   state.msgs = msgs;
 }
