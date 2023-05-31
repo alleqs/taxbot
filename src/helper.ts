@@ -1,4 +1,5 @@
 import { cfopMap } from './constants/cfopMap';
+import { cnaeMap } from './constants/cnaeMap';
 import { ncmMap } from './constants/ncmMap';
 import { ufsMap } from './constants/ufs';
 import type { FullNFe, Item, NFe, NfStatus, RegFull } from './types'
@@ -50,6 +51,7 @@ export async function nfeToItems(file: File): Promise<[RegFull[], NfStatus]> {
       CPFEmit: CPFEmit && String(CPFEmit).padStart(11, '0'),
       ufEmit: ufsMap[cUF],
       cnaeEmit: cnaeEmit,
+      descCnaeEmit: cnaeEmit ? cnaeMap[cnaeEmit] : '',
       modelo: mod,
       numNF: _nNF,
       vProd,
@@ -68,6 +70,7 @@ export async function nfeToItems(file: File): Promise<[RegFull[], NfStatus]> {
       rsDest: xNomeDest,
       CPFDest: CPFDest && String(CPFDest).padStart(11, '0'),
       cnaeDest,
+      descCnaeDest: cnaeDest ? cnaeMap[cnaeDest] : '',
       natOp,
       tpAmb: tpAmb === 1 ? 'produção' : 'homologação',
       tpEmis: tpEmis === 1 ? 'normal' : 'contingência',

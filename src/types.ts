@@ -130,6 +130,7 @@ export type Reg = {
    CPFEmit: string | undefined
    ufEmit: string
    cnaeEmit: number | undefined
+   descCnaeEmit: string
    // descCNAEEmit: string | undefined
    modelo: number
    chaveNF: string
