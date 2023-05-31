@@ -1,3 +1,6 @@
+import { cfopMap } from './constants/cfopMap';
+import { ncmMap } from './constants/ncmMap';
+import { ufsMap } from './constants/ufs';
 import type { FullNFe, Item, NFe, NfStatus, RegFull } from './types'
 import { XMLParser } from 'fast-xml-parser';
 
@@ -21,7 +24,10 @@ export async function nfeToItems(file: File): Promise<[RegFull[], NfStatus]> {
    const det = Array.isArray(_det) ? _det : [_det];
    const items: Item[] =
       det.map(({ prod: { NCM, CFOP, nItem, cProd, qCom, uCom, vUnCom, xProd } }) =>
-         ({ NCM, CFOP, numSeqItem: nItem, codProd: cProd, descProd: xProd, qCom, uCom, vUnCom }));
+      ({
+         NCM, CFOP, numSeqItem: nItem, codProd: cProd, descProd: xProd, qCom, uCom, vUnCom, descCFOP:
+            cfopMap[CFOP] ?? '', descNCM: ncmMap[NCM] ?? ''
+      }));
    const AAMM = `${anoEmissao.slice(-2)}${mesEmissao}`;
    const CNPJEmit = _CNPJEmit && String(_CNPJEmit).padStart(14, '0');
    const nNF = String(_nNF).padStart(9, '0')
@@ -42,7 +48,7 @@ export async function nfeToItems(file: File): Promise<[RegFull[], NfStatus]> {
       IEEmit: IEEmit && String(IEEmit),
       rsEmit: xNomeEmit,
       CPFEmit: CPFEmit && String(CPFEmit).padStart(11, '0'),
-      ufEmit: cUF,
+      ufEmit: ufsMap[cUF],
       cnaeEmit: cnaeEmit,
       modelo: mod,
       numNF: _nNF,
@@ -63,12 +69,12 @@ export async function nfeToItems(file: File): Promise<[RegFull[], NfStatus]> {
       CPFDest: CPFDest && String(CPFDest).padStart(11, '0'),
       cnaeDest,
       natOp,
-      tpAmb,
-      tpEmis,
-      tpNF,
+      tpAmb: tpAmb === 1 ? 'produção' : 'homologação',
+      tpEmis: tpEmis === 1 ? 'normal' : 'contingência',
+      tpNF: tpNF === 1 ? 'saída' : 'entrada',
       chaveNF: String(chaveNF),
       ...item
-   }));
+   } as RegFull));
    return [regs, nfStatus]
 }
 

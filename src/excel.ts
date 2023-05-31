@@ -24,8 +24,11 @@ ws.columns = [
    { header: 'Valor Total Seguro Nfe', key: 'vSeg', width: 10, style: { numFmt: '#,##0.00;-#,##0.00;-' } },
    { header: 'Valor de Outras Desp Acess', key: 'vOutro', width: 10, style: { numFmt: '#,##0.00;-#,##0.00;-' } },
 
-   { header: 'Cod Ncm', key: 'NCM', width: 10 },
-   { header: 'Cod Cfop', key: 'CFOP', width: 10 },
+   { header: 'Cod NCM', key: 'NCM', width: 10 },
+   { header: 'Desc. NCM', key: 'descNCM', width: 25 },
+   { header: 'Cod CFOP', key: 'CFOP', width: 8 },
+   { header: 'Desc. CFOP', key: 'descCFOP', width: 25 },
+
    { header: 'Numero Sequencial do Item', key: 'numSeqItem', width: 6 },
    { header: 'Cod Produto Nfe', key: 'codProd', width: 10 },
    { header: 'Descricao Produto Nfe', key: 'descProd', width: 30 },
@@ -47,9 +50,9 @@ ws.columns = [
 
    { header: 'Cod Cnae Fiscal Destinatario', key: 'cnaeDest', width: 8 },
    { header: 'Natureza Operacao', key: 'natOp', width: 25 },
-   { header: 'Tipo NF', key: 'tpNF', width: 4 },
-   { header: 'Tipo Ambiente', key: 'tpAmb', width: 4 },
-   { header: 'Tipo Emissão', key: 'tpEmis', width: 4 },
+   { header: 'Tipo NF', key: 'tpNF', width: 10 },
+   { header: 'Tipo Ambiente', key: 'tpAmb', width: 10 },
+   { header: 'Tipo Emissão', key: 'tpEmis', width: 10 },
 
 ];
 

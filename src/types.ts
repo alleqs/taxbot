@@ -128,7 +128,7 @@ export type Reg = {
    IEEmit: string | undefined
    rsEmit: string | undefined
    CPFEmit: string | undefined
-   ufEmit: number
+   ufEmit: string
    cnaeEmit: number | undefined
    // descCNAEEmit: string | undefined
    modelo: number
@@ -153,18 +153,18 @@ export type Reg = {
    cnaeDest: number | undefined
    // descCnaeDest: string | undefined
    natOp: string
-   tpAmb: number
-   tpEmis: number
-   tpNF: number
+   tpAmb: 'produção' | 'homologação'
+   tpEmis: 'normal' | 'contingência'
+   tpNF: 'entrada' | 'saída'
    // // dtCancel: string
    // items: Item[]
 }
 
 export type Item = {
    NCM: number
-   // descNCM: string
+   descNCM: string
    CFOP: number
-   // descCFOP: string
+   descCFOP: string
    numSeqItem: number
    codProd: string
    descProd: string
