@@ -152,7 +152,7 @@ export type Reg = {
    rsDest: string | undefined
    CPFDest: string | undefined
    cnaeDest: number | undefined
-   // descCnaeDest: string | undefined
+   descCnaeDest: string
    natOp: string
    tpAmb: 'produção' | 'homologação'
    tpEmis: 'normal' | 'contingência'

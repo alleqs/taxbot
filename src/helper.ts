@@ -1,7 +1,7 @@
 import { cfopMap } from './constants/cfopMap';
 import { cnaeMap } from './constants/cnaeMap';
 import { ncmMap } from './constants/ncmMap';
-import { ufsMap } from './constants/ufs';
+import { ufsMap } from './constants/ufMap';
 import type { FullNFe, Item, NFe, NfStatus, RegFull } from './types'
 import { XMLParser } from 'fast-xml-parser';
 

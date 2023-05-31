@@ -1,5 +1,5 @@
 
-export const cnaeMap = {
+export const cnaeMap: Record<number, string> = {
    3250706: 'Serviços de prótese dentária',
    3250709: 'Serviço de laboratório óptico',
    4399101: 'Administração de obras',
