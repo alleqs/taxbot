@@ -1,9 +1,11 @@
+import type { FullNFe, Item, NFe, NfStats, NfStatus, RegFull } from './types'
 import { cfopMap } from './constants/cfopMap';
 import { cnaeMap } from './constants/cnaeMap';
 import { ncmMap } from './constants/ncmMap';
 import { ufsMap } from './constants/ufMap';
-import type { FullNFe, Item, NFe, NfStatus, RegFull } from './types'
+import { getWb } from './excel';
 import { XMLParser } from 'fast-xml-parser';
+import { state } from './store';
 
 const parser = new XMLParser();
 
@@ -80,6 +82,26 @@ export async function nfeToItems(file: File): Promise<[RegFull[], NfStatus]> {
    } as RegFull));
    return [regs, nfStatus]
 }
+
+export async function createNfSheet(regs: RegFull[], link: HTMLAnchorElement) {
+   const wb = getWb(regs);
+   const buffer = await wb.xlsx.writeBuffer();
+   const file = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+   link.href = URL.createObjectURL(file);
+   link.download = 'NFe-itens.xlsx';
+}
+
+export function formatNfStats({ numNfs, emConting, homolog, semProtAut }: NfStats) {
+   const msgs = [
+      `Total de notas fiscais: ${numNfs}`,
+      `Notas fiscais emitidas em contingência: ${emConting}`,
+      `Notas fiscais emitidas em ambiente de homologação: ${homolog}`,
+      `Notas fiscais com protocolo de autorização omitido: ${semProtAut}`
+   ];
+   state.msgs = msgs;
+}
+
+
 
 // export function readNFes(fileList: FileList) {
 

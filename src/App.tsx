@@ -1,47 +1,44 @@
-import React, { useRef, type FC, useState } from 'react';
-// import { readNFes2, readNFes3 } from './helper';
-// import { Loader } from './components/Loader';
+import { useRef, type FC, useState } from 'react';
 import { BigButton } from './components/BigButton';
 import { ProgressBar } from './components/ProgressBar';
 import { useSummary } from './hooks/useSummary';
 import { NavBar } from './components/NavBar';
-import { getWb } from './excel';
 import { MsgBox } from './components/MsgBox';
-import type { NfStats } from './types';
-import { state } from './store';
-// import Excel from 'exceljs';
-
+import { createNfSheet, formatNfStats } from './helper';
 
 
 export const App: FC = () => {
   const [loading, setLoading] = useState(false);
   const [sumarioPronto, setSumarioPronto] = useState(false);
-  const { perc, getRegistries } = useSummary();
+  const { perc, getNfRegistries } = useSummary();
   const linkRef = useRef<HTMLAnchorElement>(null);
   // console.log('sumarioPronto', sumarioPronto);
 
   async function handleChange(fileList: FileList | null) {
     const link = linkRef.current;
     if (!fileList || !link) return;
-    // console.log('fileList', fileList)
     setLoading(true);
     console.time("Time");
-    // const acc = await readNFes2(fileList);
-    const [regs, nfStats] = await getRegistries(fileList);
+    const [regs, nfStats] = await getNfRegistries(fileList);
     console.timeEnd("Time");
-    // console.log('acc', acc);
-    const wb = getWb(regs);
-    const buffer = await wb.xlsx.writeBuffer();
-    // const file = new Blob([JSON.stringify(acc)], { type: 'application/json' });
-    const file = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    link.href = URL.createObjectURL(file);
-    link.download = 'NFe-itens.xlsx';
+    await createNfSheet(regs, link)
     setLoading(false);
     setSumarioPronto(true);
-    formatStats(nfStats);
-    // state.msgs.push("opa");
-    // state.msgs.push("blz?");
-    // state.msgs.push("certo");
+    formatNfStats(nfStats);
+  }
+
+  async function handleChange2(fileList: FileList | null) {
+    console.log('opa')
+    if (!fileList) return;
+    const len = fileList.length;
+    for (let i = 0; i < len; i++) {
+      const file = fileList[i];
+      if (file.type === 'text/plain') {
+
+      } else if (file.type === 'application/x-zip-compressed') {
+
+      }
+    }
   }
 
 
@@ -52,8 +49,9 @@ export const App: FC = () => {
         <div className='flex space-x-10'>
           <BigButton image='nfe.png' onChange={e => handleChange(e.target.files)} />
           <BigButton image='cte.png' onChange={e => handleChange(e.target.files)} />
+          <BigButton image='sped.png' onChange={e => handleChange2(e.target.files)} />
         </div>
-        <div className='space-y-4'>
+        <div className='space-y-4 '>
           {/* <div className='h-40 w-96 border border-gray-300 rounded-lg bg-white'>
           </div> */}
           <MsgBox />
@@ -68,15 +66,5 @@ export const App: FC = () => {
     </div>
   );
 };
-
-function formatStats({ numNfs, emConting, homolog, semProtAut }: NfStats) {
-  const msgs = [
-    `Total de notas fiscais: ${numNfs}`,
-    `Notas fiscais emitidas em contingência: ${emConting}`,
-    `Notas fiscais emitidas em ambiente de homologação: ${homolog}`,
-    `Notas fiscais com protocolo de autorização omitido: ${semProtAut}`
-  ];
-  state.msgs = msgs;
-}
 
 

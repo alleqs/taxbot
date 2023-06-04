@@ -7,15 +7,17 @@ type Props = {
 
 export const BigButton: FC<Props> = ({ image, onChange }) => {
 
+   console.log('image', image)
+
    return (
-      <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center px-6 h-36 border-2 border-gray-300 rounded-lg 
+      <label htmlFor={image} className="flex flex-col items-center justify-center px-6 h-36 border-2 border-gray-300 rounded-lg 
       cursor-pointer bg-white dark:hover:bg-bray-800 hover:bg-gray-50">
          <div className="flex flex-col items-center justify-center pt-5 pb-1">
             <img className='mb-3' width={100} height={100} src={image} alt='ícone NFe' />
             {/* <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Clique</span> ou arraste</p> */}
             {/* <p className="text-xs text-gray-500 dark:text-gray-400">apenas XML</p> */}
          </div>
-         <input id="dropzone-file" directory="" webkitdirectory="" type="file" className="hidden" multiple onChange={onChange} onDrag={() => { console.log('ei') }} />
+         <input id={image} directory="" webkitdirectory="" type="file" className="hidden" multiple onChange={onChange} />
       </label>
    );
 };

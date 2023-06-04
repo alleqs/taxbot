@@ -8,7 +8,7 @@ export function useSummary() {
    const [perc, setPerc] = useState(0)
    const fullRegs: RegFull[] = [];
 
-   async function getRegistries(fileList: FileList): Promise<[RegFull[], NfStats]> {
+   async function getNfRegistries(fileList: FileList): Promise<[RegFull[], NfStats]> {
       const len = fileList.length;
       const nfStats: NfStats = { emConting: 0, homolog: 0, semProtAut: 0, numNfs: 0 };
       return new Promise<[RegFull[], NfStats]>(async r => {
@@ -28,7 +28,7 @@ export function useSummary() {
       });
    }
 
-   return { perc, getRegistries }
+   return { perc, getNfRegistries }
 }
 
 function updateStats({ emConting, homolog, semProtAut }: NfStatus, acc: NfStats) {
