@@ -5,7 +5,9 @@ import { useSummary } from './hooks/useSummary';
 import { NavBar } from './components/NavBar';
 import { MsgBox } from './components/MsgBox';
 import { createNfSheet, formatNfStats } from './helper';
-
+import JSZip from "jszip";
+import { Analitico } from './types';
+import { groupBy } from 'lodash';
 
 export const App: FC = () => {
   const [loading, setLoading] = useState(false);
@@ -28,17 +30,27 @@ export const App: FC = () => {
   }
 
   async function handleChange2(fileList: FileList | null) {
-    console.log('opa')
+    // console.log('opa')
     if (!fileList) return;
+    const analiticoMap: Record<string, Analitico[]> = {};
+    const zip = new JSZip();
     const len = fileList.length;
     for (let i = 0; i < len; i++) {
       const file = fileList[i];
       if (file.type === 'text/plain') {
-
+        console.log('file.name', file.name)
       } else if (file.type === 'application/x-zip-compressed') {
-
+        const buffer = await file.arrayBuffer();
+        const obj = await zip.loadAsync(buffer);
+        const efd = await Object.values(obj.files).at(-1)?.async('string');
+        if (!efd) return;
+        const [_ini, analitico] = getAnaliticoRegs(efd);
+        const ini = `${_ini.substring(0, 2)}-${_ini.substring(2, 4)}-${_ini.substring(4, 8)}`
+        analiticoMap[ini] = analitico;
       }
     }
+    const a = getAnaliticoArr(analiticoMap['01-03-2023'])
+    console.log('analiticoMap', a)
   }
 
 
@@ -67,4 +79,42 @@ export const App: FC = () => {
   );
 };
 
+function getAnaliticoRegs(efd: string): [string, Analitico[]] {
+  const lines = efd.split('\r\n');
+  const ini = lines.find(line => line.substring(1, 5) === '0000')?.substring(12, 20);
+  if (!ini) {
+    throw new Error('código 0000 não encontrado')
+  }
+  const arr: Analitico[] = [];
+  for (const line of lines) {
+    const cod = line.substring(1, 5);
+    if (cod === 'C190') {
+      const [, , cst, cfop, _aliq, _valOper, _bc, _icms, _bcIcmsST, _icmsST, _redBc, ,] = line.split('|');
+      const analitico: Analitico = {
+        cst, cfop, aliq: +_aliq.replaceAll(',', '.'), valOper: +_valOper.replaceAll(',', '.'), bc: +_bc.replaceAll(',', '.'), icms: +_icms.replaceAll(',', '.'),
+        bcST: +_bcIcmsST.replaceAll(',', '.'), sT: +_icmsST.replaceAll(',', '.'), redBc: +_redBc.replaceAll(',', '.')
+      };
+      arr.push(analitico);
+    }
+  }
+  return [ini, arr];
+}
 
+function getAnaliticoArr(analiticoRegs: Analitico[]): Analitico[] {
+  const obj = groupBy(analiticoRegs, ({ cst, cfop, aliq }) => `${cst}-${cfop}-${aliq}`);
+  let bcAcc = 0, icmsAcc = 0, bcSTAcc = 0, stAcc = 0, redBcAcc = 0, valOperAcc = 0;
+  return Object.entries(obj).map(([key, analiticoArr]) => {
+    analiticoArr.forEach(({ bc, icms, bcST, sT, redBc, valOper }) => {
+      bcAcc += bc;
+      icmsAcc += icms;
+      bcAcc += bc;
+      bcSTAcc += bcST;
+      stAcc += sT;
+      redBcAcc += redBc;
+      valOperAcc += valOper;
+    });
+    const [cst, cfop, _aliq] = key.split('-');
+    const analitico: Analitico = { cst, cfop, aliq: +_aliq, bc: bcAcc, bcST: bcSTAcc, icms: icmsAcc, sT: stAcc, redBc: redBcAcc, valOper: valOperAcc };
+    return analitico;
+  });
+}

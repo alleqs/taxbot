@@ -176,6 +176,19 @@ export type Item = {
 
 export type RegFull = Reg & Item
 
+export type Analitico = {
+   // ini: string
+   cst: string
+   cfop: string
+   aliq: number
+   valOper: number
+   bc: number
+   icms: number
+   bcST: number
+   sT: number
+   redBc: number
+}
+
 // NCM: number
 // CFOP: number
 // nItem: number
