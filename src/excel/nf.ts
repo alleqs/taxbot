@@ -1,5 +1,5 @@
 import Excel from 'exceljs';
-import type { RegFull } from './types';
+import type { RegFull } from '../types';
 
 const wb = new Excel.Workbook();
 const ws = wb.addWorksheet('itens');

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { NfStats, NfStatus, RegFull } from '../types';
-import { nfeToItems } from '../helper';
+import { nfeToItems } from '../helper/nf';
 
 export function useSummary() {
 
