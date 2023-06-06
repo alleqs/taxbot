@@ -1,12 +1,12 @@
 import { useRef, type FC, useState } from 'react';
 import { BigButton } from './components/BigButton';
 import { ProgressBar } from './components/ProgressBar';
-import { useSummary } from './hooks/useSummary';
 import { NavBar } from './components/NavBar';
 import { MsgBox } from './components/MsgBox';
+import { Loader } from './components/Loader';
+import { useSummary } from './hooks/useSummary';
 import { createNfSheet, formatNfStats } from './helper/nf';
 import { createEfdSheet, getEfdRegistries } from './helper/efd';
-import { Loader } from './components/Loader';
 
 
 export const App: FC = () => {
@@ -34,9 +34,9 @@ export const App: FC = () => {
     if (!fileList || !link) return;
     setLoading(true);
     console.time("Time");
-    const [entradas, saidas] = await getEfdRegistries(fileList)
+    const [entradas, saidas, infoContrib] = await getEfdRegistries(fileList)
     console.timeEnd("Time");
-    await createEfdSheet(entradas, saidas, link);
+    await createEfdSheet(entradas, saidas, infoContrib, link);
     setLoading(false);
     setSumarioPronto(true);
 

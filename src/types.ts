@@ -189,6 +189,15 @@ export type Analitico = {
    redBc: number
 }
 
+export type AnaliticoFull = Analitico & { anoMes: Date }
+
+export type InfoContrib = {
+   nome: string
+   IE: string
+   iniPerApur: Date
+   fimPerApur: Date
+}
+
 // NCM: number
 // CFOP: number
 // nItem: number
