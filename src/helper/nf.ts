@@ -2,7 +2,6 @@ import type { FullNFe, Item, NFe, NfStats, NfStatus, RegFull } from '../types'
 import { cfopMap } from '../constants/cfopMap';
 import { cnaeMap } from '../constants/cnaeMap';
 import { ncmMap } from '../constants/ncmMap';
-import { ufsMap } from '../constants/ufMap';
 import { getWb } from '../excel/nf';
 import { XMLParser } from 'fast-xml-parser';
 import { state } from '../store';

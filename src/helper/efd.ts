@@ -55,7 +55,6 @@ export async function createEfdSheet(entradas: Analitico[], saidas: Analitico[],
    link.download = 'IO.xlsx';
 }
 
-
 function getAnaliticoRegs(efd: string): [InfoContrib, Analitico[]] {
    const lines = efd.split('\r\n');
    const cadastro = lines.find(line => line.substring(1, 5) === '0000');
