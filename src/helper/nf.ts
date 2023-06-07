@@ -27,9 +27,9 @@ export async function nfeToItems(file: File): Promise<[RegFull[], NfStatus]> {
    const [anoEmissao, mesEmissao,] = dhEmi.split('-');
    const det = Array.isArray(_det) ? _det : [_det];
    const items: Item[] =
-      det.map(({ prod: { NCM, CFOP, nItem, cProd, qCom, uCom, vUnCom, xProd, vProd } }) =>
+      det.map(({ prod: { NCM, CFOP, cProd, qCom, uCom, vUnCom, xProd, vProd } }, i) =>
       ({
-         NCM, CFOP, numSeqItem: nItem, codProd: cProd, descProd: xProd, qCom, uCom, vUnCom, vProd, descCFOP:
+         NCM, CFOP, numSeqItem: i + 1, codProd: cProd, descProd: xProd, qCom, uCom, vUnCom, vProd, descCFOP:
             cfopMap[CFOP] ?? '', descNCM: ncmMap[NCM] ?? ''
       }));
    const AAMM = `${anoEmissao.slice(-2)}${mesEmissao}`;

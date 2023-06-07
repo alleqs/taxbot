@@ -3,6 +3,7 @@ import type { Analitico, AnaliticoFull, InfoContrib } from "../types";
 import { groupBy, partition } from 'lodash';
 import { getWb } from "../excel/efd";
 import { min, max } from 'lodash'
+import { uint8ArrayToString } from "./common";
 
 
 export async function getEfdRegistries(fileList: FileList): Promise<[Analitico[], Analitico[], InfoContrib]> {
@@ -23,7 +24,7 @@ export async function getEfdRegistries(fileList: FileList): Promise<[Analitico[]
          const obj = await zip.loadAsync(buffer);
          const uint8Arr = await Object.values(obj.files).at(-1)?.async('uint8array');
          if (!uint8Arr) throw new Error("Efd não encontrada");
-         const efd = [...uint8Arr].map(c => String.fromCharCode(c)).join('');
+         const efd = uint8ArrayToString(uint8Arr);
          const [{ iniPerApur, fimPerApur, nome, IE }, analitico] = getAnaliticoRegs(efd);
          razaoSocial ??= nome;
          inscEst ??= IE;

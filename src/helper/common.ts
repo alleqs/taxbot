@@ -23,12 +23,11 @@ export function formatCPF(_cpf: string | number | undefined) {
    return `${cpf.substring(0, 3)}.${cpf.substring(3, 6)}.${cpf.substring(6, 9)}-${cpf.substring(9, 11)}`;
 }
 
-// function isNumeric(str: string | number) {
-//    if (typeof str != "string") return false // we only process strings!  
-//    return !isNaN(+str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-//       !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
-// }
+export function uint8ArrayToString(uint8Arr: Uint8Array) {
+   return [...uint8Arr].map(c => String.fromCharCode(c)).join('');
+}
 
 function isNumeric(num: any) {
    return (typeof (num) === 'number' || typeof (num) === "string" && num.trim() !== '') && !isNaN(num as number);
 };
+

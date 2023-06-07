@@ -39,19 +39,15 @@ export const App: FC = () => {
     await createEfdSheet(entradas, saidas, infoContrib, link);
     setLoading(false);
     setSumarioPronto(true);
-
-    // sort(saidas);
-    // console.log('analiticoMap', entradas)
-    // const a = saidas.map(({ cst, cfop, aliq, valOper }) => `${cst}\t${cfop}\t${aliq}\t${valOper}`).join('\n')
-    // console.log(a)
   }
 
 
   return (
     <div className='bg-gray-100'>
       <NavBar />
-      <div className='h-screen flex flex-col justify-center items-center space-y-8'>
-        <div className='flex space-x-10'>
+      <h1 className='flex justify-center text-gray-700 text-3xl mt-20'>Conversor para formato<span className='font-medium'>&nbsp;Excel</span></h1>
+      <div className='h-screen flex flex-col items-center space-y-8'>
+        <div className='flex space-x-10 mt-24'>
           <BigButton image='nfe.png' onChange={e => handleNFChange(e.target.files)} />
           <BigButton image='cte.png' onChange={e => handleNFChange(e.target.files)} />
           <BigButton image='sped.png' onChange={e => handleEfdChange(e.target.files)} />
@@ -65,9 +61,9 @@ export const App: FC = () => {
             <span className='pl-2'>Baixar planilha</span>
           </a>
         </div>
-        <Loader loading={loading} />
         <ProgressBar perc={perc} loading={calculating} />
       </div>
+      <Loader loading={loading} />
     </div>
   );
 };

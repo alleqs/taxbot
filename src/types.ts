@@ -18,18 +18,28 @@ export type NfStats = {
 
 type Det = {
    imposto: {
-      ICMS: {
-         ICMS00: {
-            CST: number
-            vBC: number
-            vICMS: number
-         }
-      }
+      ICMS:
+      | { ICMS00: { origin: number, CST: number, vBC: number, pICMS: number, vICMS: number } }
+      | { ICMS10: { origin: number, CST: number, vBC: number, pICMS: number, vICMS: number } }
+      | { ICMS30: { origin: number, CST: number, vBCST: number, pICMSST: number, vICMSST: number } }
+      | { ICMS40: { origin: number, CST: number, vICMS: number } }
+      | { ICMS51: { origin: number, CST: number, vBC: number, pICMS: number, vICMS: number } }
+      | { ICMS60: { origin: number, CST: number, vBCSTRet: number, vICMSSTRet: number } }
+      | { ICMS70: { origin: number, CST: number, vBC: number, pICMS: number, vICMS: number, vBCST: number, pICMSST: number, vICMSST: number } }
+      | { ICMS90: { origin: number, CST: number, vBC: number, pICMS: number, vICMS: number, vBCST: number, pICMSST: number, vICMSST: number } }
+      | { ICMSPart: { origin: number, CST: number, vBC: number, pICMS: number, vICMS: number, vBCST: number, pICMSST: number, vICMSST: number } }
+      | { ICMSST: { origin: number, CST: number, vBCSTRet: number, vBCSTDest: number, vICMSSTRet: number, vICMSSTDest: number } }
+      | { ICMSSN101: { CSOSN: number } }
+      | { ICMSSN102: { CSOSN: number } }
+      | { ICMSSN201: { CSOSN: number } }
+      | { ICMSSN202: { CSOSN: number } }
+      | { ICMSSN500: { CSOSN: number } }
+      | { ICMSSN900: { CSOSN: number } }
    }
    prod: {
       NCM: number
       CFOP: number
-      nItem: number
+      // nItem: number
       cProd: string
       xProd: string
       qCom: number
@@ -49,6 +59,16 @@ export type FullNFe = {
 export type NFe = {
    NFe: {
       infNFe: {
+         emit: {
+            CNPJ: string | undefined
+            IE: string | undefined
+            CRT: number
+            xNome: string
+            CNAE?: number
+            cUF: number
+            CPF: string
+            enderEmit: { UF: string }
+         }
          dest: {
             CNPJ: string | undefined
             IE: string | undefined
@@ -57,16 +77,6 @@ export type NFe = {
             CNAE?: number
             CPF: string
             enderDest: { UF: string }
-         }
-         emit: {
-            CNPJ: string | undefined
-            IE: string | undefined
-            CRT: number
-            xNome: string
-            CNAE?: number
-            CPF: string
-            enderEmit: { UF: string }
-
          }
          det: Det[] | Det
          ide: {
@@ -108,6 +118,7 @@ export type NFe = {
                vST: number
                vICMSDeson: number
                vIPI: number
+               // vProd: number
             }
          }
          transp: object
@@ -116,13 +127,11 @@ export type NFe = {
 }
 
 export type Reg = {
-   // anoEmissao: number
-   // mesEmissao: number
    dtEmissao: Date
-   CNPJEmit: string | number | undefined
-   IEEmit: string | number | undefined
+   CNPJEmit: string | undefined
+   IEEmit: string | undefined
    rsEmit: string | undefined
-   CPFEmit: string | number | undefined
+   CPFEmit: string | undefined
    ufEmit: string
    cnaeEmit: number | undefined
    descCnaeEmit: string
@@ -142,10 +151,10 @@ export type Reg = {
    vST: number
    vICMSDeson: number
    vIPI: number
-   CNPJDest: string | number | undefined
-   IEDest: string | number | undefined
+   CNPJDest: string | undefined
+   IEDest: string | undefined
    rsDest: string | undefined
-   CPFDest: string | number | undefined
+   CPFDest: string | undefined
    cnaeDest: number | undefined
    descCnaeDest: string
    natOp: string
@@ -173,7 +182,6 @@ export type Item = {
 export type RegFull = Reg & Item
 
 export type Analitico = {
-   // ini: string
    cst: string
    cfop: string
    aliq: number
@@ -193,3 +201,28 @@ export type InfoContrib = {
    iniPerApur: Date
    fimPerApur: Date
 }
+
+// NCM: number
+// CFOP: number
+// nItem: number
+// cProd: string
+// xProd: string
+// qCom: number
+// uCom: number
+// vUnCom: number
+
+// export type Sumario = {
+//    // validadas: boolean
+//    vNF: number
+//    vProd: number
+//    vICMS: number
+//    vST: number
+//    vBC: number
+//    vBCST: number
+// }
+
+// export type SumarioFull = Sumario & {
+//    validas: number
+//    invalidas: number
+//    totalNFs: number
+// }
