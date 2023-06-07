@@ -8,7 +8,7 @@ ws.columns = [
    // { header: 'Ano Emissão', key: 'anoEmissao', width: 6 },
    // { header: 'Mes Emissao', key: 'mesEmissao', width: 3 },
    { header: 'Data Emissão', key: 'dtEmissao', width: 12, style: { numFmt: 'yyyy/mm/dd' } },
-   { header: 'Cnpj Emitente', key: 'CNPJEmit', width: 15 },
+   { header: 'CNPJ Emitente', key: 'CNPJEmit', width: 15 },
    { header: 'IE Emitente', key: 'IEEmit' },
    { header: 'Razão Social Emitente', key: 'rsEmit', width: 30 },
    { header: 'CPF Emitente', key: 'CPFEmit' },
