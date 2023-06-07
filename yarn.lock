@@ -461,11 +461,6 @@
     "@babel/plugin-transform-react-jsx-source" "^7.19.6"
     react-refresh "^0.14.0"
 
-"@xmldom/xmldom@^0.8.2":
-  version "0.8.8"
-  resolved "https://registry.npmjs.org/@xmldom/xmldom/-/xmldom-0.8.8.tgz"
-  integrity sha512-0LNz4EY8B/8xXY86wMrQ4tz6zEHZv9ehFMJPm8u2gq5lQ71cfRKdaKyxfJAx5aUoyzx0qzgURblTisPGgz3d+Q==
-
 ansi-styles@^3.2.1:
   version "3.2.1"
   resolved "https://registry.npmjs.org/ansi-styles/-/ansi-styles-3.2.1.tgz"
@@ -519,15 +514,6 @@ arg@^5.0.2:
   version "5.0.2"
   resolved "https://registry.npmjs.org/arg/-/arg-5.0.2.tgz"
   integrity sha512-PYjyFOLKQ9y57JvQ6QLo8dAgNqswh8M1RMJYdQduT6xbWSgK36P/Z/v+p888pM69jMMfS8Xd8F6I1kQ/I9HUGg==
-
-asn1js@^3.0.5:
-  version "3.0.5"
-  resolved "https://registry.npmjs.org/asn1js/-/asn1js-3.0.5.tgz"
-  integrity sha512-FVnvrKJwpt9LP2lAMl8qZswRNm3T4q9CON+bxldk2iwk3FFpuwhx2FfinyitizWHsVYyaY+y5JzDR0rCMV5yTQ==
-  dependencies:
-    pvtsutils "^1.3.2"
-    pvutils "^1.1.3"
-    tslib "^2.4.0"
 
 async@^3.2.3:
   version "3.2.4"
@@ -642,11 +628,6 @@ buffers@~0.1.1:
   version "0.1.1"
   resolved "https://registry.npmjs.org/buffers/-/buffers-0.1.1.tgz"
   integrity sha512-9q/rDEGSb/Qsvv2qvzIzdluL5k7AaJOTrw23z9reQthrbF7is4CtlT0DXyO1oei2DCp4uojjzQ7igaSHp1kAEQ==
-
-bytestreamjs@^2.0.0:
-  version "2.0.1"
-  resolved "https://registry.npmjs.org/bytestreamjs/-/bytestreamjs-2.0.1.tgz"
-  integrity sha512-U1Z/ob71V/bXfVABvNr/Kumf5VyeQRBEm6Txb0PQ6S7V5GpBM3w4Cbqz/xPDicR5tN0uvDifng8C+5qECeGwyQ==
 
 camelcase-css@^2.0.1:
   version "2.0.1"
@@ -1315,17 +1296,6 @@ pirates@^4.0.1:
   resolved "https://registry.npmjs.org/pirates/-/pirates-4.0.5.tgz"
   integrity sha512-8V9+HQPupnaXMA23c5hvl69zXvTwTzyAYasnkb0Tts4XvO4CliqONMOnvlq26rkhLC3nWDFBJf73LU1e1VZLaQ==
 
-pkijs@^3.0.10:
-  version "3.0.14"
-  resolved "https://registry.npmjs.org/pkijs/-/pkijs-3.0.14.tgz"
-  integrity sha512-Fi9++44BaOY0VcOEJql27D/HzHIeMU9R48XclfL98Cp8Wh/gGfPbuS1RUwReHQHRIUfzW32eoNO1izxoBMZi6w==
-  dependencies:
-    asn1js "^3.0.5"
-    bytestreamjs "^2.0.0"
-    pvtsutils "^1.3.2"
-    pvutils "^1.1.3"
-    tslib "^2.4.0"
-
 postcss-import@^15.1.0:
   version "15.1.0"
   resolved "https://registry.npmjs.org/postcss-import/-/postcss-import-15.1.0.tgz"
@@ -1388,18 +1358,6 @@ proxy-compare@2.5.1:
   version "2.5.1"
   resolved "https://registry.npmjs.org/proxy-compare/-/proxy-compare-2.5.1.tgz"
   integrity sha512-oyfc0Tx87Cpwva5ZXezSp5V9vht1c7dZBhvuV/y3ctkgMVUmiAGDVeeB0dKhGSyT0v1ZTEQYpe/RXlBVBNuCLA==
-
-pvtsutils@^1.3.2:
-  version "1.3.2"
-  resolved "https://registry.npmjs.org/pvtsutils/-/pvtsutils-1.3.2.tgz"
-  integrity sha512-+Ipe2iNUyrZz+8K/2IOo+kKikdtfhRKzNpQbruF2URmqPtoqAs8g3xS7TJvFF2GcPXjh7DkqMnpVveRFq4PgEQ==
-  dependencies:
-    tslib "^2.4.0"
-
-pvutils@^1.1.3:
-  version "1.1.3"
-  resolved "https://registry.npmjs.org/pvutils/-/pvutils-1.1.3.tgz"
-  integrity sha512-pMpnA0qRdFp32b1sJl1wOJNxZLQ2cbQx+k6tjNtZ8CpvVhNqEPRgivZ2WOUev2YMajecdH7ctUPDvEe87nariQ==
 
 queue-microtask@^1.2.2:
   version "1.2.3"
@@ -1677,11 +1635,6 @@ ts-interface-checker@^0.1.9:
   resolved "https://registry.npmjs.org/ts-interface-checker/-/ts-interface-checker-0.1.13.tgz"
   integrity sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==
 
-tslib@^2.4.0, tslib@^2.4.1:
-  version "2.5.3"
-  resolved "https://registry.npmjs.org/tslib/-/tslib-2.5.3.tgz"
-  integrity sha512-mSxlJJwl3BMEQCUNnxXBU9jP4JBktcEGhURcPR6VQVlnP0FdDEsIaz0C35dXNGLyRfrATNofF0F5p2KPxQgB+w==
-
 typescript@^5.0.2:
   version "5.1.3"
   resolved "https://registry.npmjs.org/typescript/-/typescript-5.1.3.tgz"
@@ -1750,42 +1703,10 @@ wrappy@1:
   resolved "https://registry.npmjs.org/wrappy/-/wrappy-1.0.2.tgz"
   integrity sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==
 
-xml-core@^1.1.5:
-  version "1.1.5"
-  resolved "https://registry.npmjs.org/xml-core/-/xml-core-1.1.5.tgz"
-  integrity sha512-6pZbMgvvtSxXSLmWkUPgFi274oljUHCBKm9GS4ySCXhXCODbJwB8e/UHHzbnnm4X1vVWMfXcip2vrLxN6KSbMw==
-  dependencies:
-    "@xmldom/xmldom" "^0.8.2"
-    tslib "^2.4.0"
-    xpath.js "^1.1.0"
-
 xmlchars@^2.2.0:
   version "2.2.0"
   resolved "https://registry.npmjs.org/xmlchars/-/xmlchars-2.2.0.tgz"
   integrity sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==
-
-xmldsigjs@^2.5.1:
-  version "2.5.1"
-  resolved "https://registry.npmjs.org/xmldsigjs/-/xmldsigjs-2.5.1.tgz"
-  integrity sha512-Zv23JWVs6zdFCdWhbVNOdXfdpyh9/n8GyAMnk1yNWRvico1GxQSMwyuXEdvidz5REfaTxuwsAnKn4gDus63uKg==
-  dependencies:
-    asn1js "^3.0.5"
-    pkijs "^3.0.10"
-    pvtsutils "^1.3.2"
-    pvutils "^1.1.3"
-    tslib "^2.4.1"
-    xml-core "^1.1.5"
-    xpath "^0.0.32"
-
-xpath.js@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.npmjs.org/xpath.js/-/xpath.js-1.1.0.tgz"
-  integrity sha512-jg+qkfS4K8E7965sqaUl8mRngXiKb3WZGfONgE18pr03FUQiuSV6G+Ej4tS55B+rIQSFEIw3phdVAQ4pPqNWfQ==
-
-xpath@^0.0.32:
-  version "0.0.32"
-  resolved "https://registry.npmjs.org/xpath/-/xpath-0.0.32.tgz"
-  integrity sha512-rxMJhSIoiO8vXcWvSifKqhvV96GjiD5wYb8/QHdoRyQvraTpp4IEv944nhGausZZ3u7dhQXteZuZbaqfpB7uYw==
 
 yallist@^3.0.2:
   version "3.1.1"

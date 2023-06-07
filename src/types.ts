@@ -35,13 +35,7 @@ type Det = {
       qCom: number
       uCom: string
       vUnCom: number
-      // vUnTrib: number
-      // vFrete: number
-      // vSeg: number
-      // vOutro: number
-      // qTrib: number
-      // uTrib: number
-      // indTot: number
+      vProd: number
    }
 }
 
@@ -62,6 +56,7 @@ export type NFe = {
             xNome: string
             CNAE?: number
             CPF: string
+            enderDest: { UF: string }
          }
          emit: {
             CNPJ: string | undefined
@@ -69,8 +64,9 @@ export type NFe = {
             CRT: number
             xNome: string
             CNAE?: number
-            cUF: number
             CPF: string
+            enderEmit: { UF: string }
+
          }
          det: Det[] | Det
          ide: {
@@ -112,7 +108,6 @@ export type NFe = {
                vST: number
                vICMSDeson: number
                vIPI: number
-               // vProd: number
             }
          }
          transp: object
@@ -121,13 +116,13 @@ export type NFe = {
 }
 
 export type Reg = {
-   anoEmissao: number
-   mesEmissao: number
-   dtEmissao: string
-   CNPJEmit: string | undefined
-   IEEmit: string | undefined
+   // anoEmissao: number
+   // mesEmissao: number
+   dtEmissao: Date
+   CNPJEmit: string | number | undefined
+   IEEmit: string | number | undefined
    rsEmit: string | undefined
-   CPFEmit: string | undefined
+   CPFEmit: string | number | undefined
    ufEmit: string
    cnaeEmit: number | undefined
    descCnaeEmit: string
@@ -135,7 +130,7 @@ export type Reg = {
    modelo: number
    chaveNF: string
    numNF: number
-   vProd: number
+   vProdTot: number
    vDesc: number
    // // vNF: number
    vFrete: number
@@ -147,10 +142,10 @@ export type Reg = {
    vST: number
    vICMSDeson: number
    vIPI: number
-   CNPJDest: string | undefined
-   IEDest: string | undefined
+   CNPJDest: string | number | undefined
+   IEDest: string | number | undefined
    rsDest: string | undefined
-   CPFDest: string | undefined
+   CPFDest: string | number | undefined
    cnaeDest: number | undefined
    descCnaeDest: string
    natOp: string
@@ -172,6 +167,7 @@ export type Item = {
    qCom: number
    uCom: string
    vUnCom: number
+   vProd: number
 }
 
 export type RegFull = Reg & Item
@@ -197,28 +193,3 @@ export type InfoContrib = {
    iniPerApur: Date
    fimPerApur: Date
 }
-
-// NCM: number
-// CFOP: number
-// nItem: number
-// cProd: string
-// xProd: string
-// qCom: number
-// uCom: number
-// vUnCom: number
-
-// export type Sumario = {
-//    // validadas: boolean
-//    vNF: number
-//    vProd: number
-//    vICMS: number
-//    vST: number
-//    vBC: number
-//    vBCST: number
-// }
-
-// export type SumarioFull = Sumario & {
-//    validas: number
-//    invalidas: number
-//    totalNFs: number
-// }
