@@ -1,4 +1,4 @@
-import type { FullNFe, Item, NFe, NfStats, NfStatus, RegFull } from '../types'
+import type { FullNFe, ICMS, ICMSItem, Item, MiniReg, NFe, NfStats, NfStatus, Reg, RegFull } from '../types'
 import { cfopMap } from '../constants/cfopMap';
 import { cnaeMap } from '../constants/cnaeMap';
 import { ncmMap } from '../constants/ncmMap';
@@ -25,12 +25,15 @@ export async function nfeToItems(file: File): Promise<[RegFull[], NfStatus]> {
    const { CNPJ: CNPJDest, IE: IEDest, xNome: xNomeDest, CNAE: cnaeDest, CPF: CPFDest } = tpNF === 1 ? dest : emit;
    const [ufEmit, ufDest] = tpNF === 1 ? [emit.enderEmit.UF, dest.enderDest.UF] : [dest.enderDest.UF, emit.enderEmit.UF];
    const [anoEmissao, mesEmissao,] = dhEmi.split('-');
+   if (Array.isArray(_det) && _det.at(-1) === undefined) {
+      console.log('opa')
+   }
    const det = Array.isArray(_det) ? _det : [_det];
    const items: Item[] =
-      det.map(({ prod: { NCM, CFOP, cProd, qCom, uCom, vUnCom, xProd, vProd } }, i) =>
+      det.map(({ prod: { NCM, CFOP, cProd, qCom, uCom, vUnCom, xProd, vProd }, imposto: { ICMS } }, i) =>
       ({
          NCM, CFOP, numSeqItem: i + 1, codProd: cProd, descProd: xProd, qCom, uCom, vUnCom, vProd, descCFOP:
-            cfopMap[CFOP] ?? '', descNCM: ncmMap[NCM] ?? ''
+            cfopMap[CFOP] ?? '', descNCM: ncmMap[NCM] ?? '', ...getICMSReg(ICMS)
       }));
    const AAMM = `${anoEmissao.slice(-2)}${mesEmissao}`;
    const CNPJEmit = formatCNPJ(_CNPJEmit);
@@ -42,23 +45,36 @@ export async function nfeToItems(file: File): Promise<[RegFull[], NfStatus]> {
       emConting: tpEmis !== 1,
       homolog: tpAmb === 2,
       semProtAut: !fullNF
-   }
+   };
+
+   const miniReg: MiniReg = {
+      dtEmissao: new Date(dhEmi),
+      CNPJEmit,
+      IEEmit: ufEmit.toUpperCase() === 'AM' ? formatIE(IEEmit) : IEEmit,
+      rsEmit: xNomeEmit,
+      CPFEmit: formatCPF(CPFEmit),
+      ufEmit,
+      cnaeEmit: cnaeEmit,
+      descCnaeEmit: cnaeEmit ? cnaeMap[cnaeEmit] : '',
+      modelo: mod,
+      numNF: _nNF,
+      CNPJDest: formatCNPJ(CNPJDest),
+      IEDest: ufDest.toUpperCase() === 'AM' ? formatIE(IEDest) : IEDest && String(IEDest),
+      rsDest: xNomeDest,
+      CPFDest: formatCPF(CPFDest),
+      ufDest,
+      cnaeDest,
+      descCnaeDest: cnaeDest ? cnaeMap[cnaeDest] : '',
+      natOp,
+      tpAmb: tpAmb === 1 ? 'produção' : 'homologação',
+      tpEmis: tpEmis === 1 ? 'normal' : 'contingência',
+      tpNF: tpNF === 1 ? 'saída' : 'entrada',
+      chaveNF: String(chaveNF),
+   };
 
    const regs = items.map((item, i) => {
-      return {
-         // anoEmissao: +anoEmissao,
-         // mesEmissao: +mesEmissao,
-         dtEmissao: new Date(dhEmi),
-         CNPJEmit,
-         IEEmit: ufEmit.toUpperCase() === 'AM' ? formatIE(IEEmit) : IEEmit,
-         rsEmit: xNomeEmit,
-         CPFEmit: formatCPF(CPFEmit),
-         ufEmit,
-         cnaeEmit: cnaeEmit,
-         descCnaeEmit: cnaeEmit ? cnaeMap[cnaeEmit] : '',
-         modelo: mod,
-         numNF: _nNF,
-         //totais ini
+      const reg: Reg = {
+         ...miniReg,
          vProdTot: i === 0 ? vProdTot : 0,
          vDesc: i === 0 ? vDesc : 0,
          vFrete: i === 0 ? vFrete : 0,
@@ -70,23 +86,10 @@ export async function nfeToItems(file: File): Promise<[RegFull[], NfStatus]> {
          vST: i === 0 ? vST : 0,
          vICMSDeson: i === 0 ? vICMSDeson : 0,
          vIPI: i === 0 ? vIPI : 0,
-         //totais fim
-         CNPJDest: formatCNPJ(CNPJDest),
-         // IEDest: dest.enderDest.UF.toUpperCase() === 'AM' ? formatIE(IEDest) : IEDest && String(IEDest),
-         IEDest: ufDest.toUpperCase() === 'AM' ? formatIE(IEDest) : IEDest && String(IEDest),
-         rsDest: xNomeDest,
-         CPFDest: formatCPF(CPFDest),
-         cnaeDest,
-         descCnaeDest: cnaeDest ? cnaeMap[cnaeDest] : '',
-         natOp,
-         tpAmb: tpAmb === 1 ? 'produção' : 'homologação',
-         tpEmis: tpEmis === 1 ? 'normal' : 'contingência',
-         tpNF: tpNF === 1 ? 'saída' : 'entrada',
-         chaveNF: String(chaveNF),
-         ...item
-      } as RegFull
+      }
+      return { ...reg, ...item };
    });
-   return [regs, nfStatus]
+   return [regs, nfStatus];
 }
 
 export async function createNfSheet(regs: RegFull[], link: HTMLAnchorElement) {
@@ -106,6 +109,49 @@ export function formatNfStats({ numNfs, emConting, homolog, semProtAut }: NfStat
    ];
    state.msgs = msgs;
 }
+
+
+function getICMSReg(icms: ICMS | undefined): ICMSItem | {} {
+   if (icms === undefined) return {};
+
+   if ('ICMS00' in icms) {
+      const { orig, CST, vBC: vBCItem, pICMS, vICMS: vICMSItem } = icms.ICMS00;
+      return { orig, CST: String(CST).padStart(2, '0'), vBCItem, pICMS, vICMSItem };
+   } else if ('ICMS10' in icms) {
+      const { orig, CST, vBC: vBCItem, pICMS, vICMS: vICMSItem, vBCST: vBCSTItem, pICMSST, vICMSST } = icms.ICMS10;
+      return { orig, CST: String(CST).padStart(2, '0'), vBCItem, pICMS, vICMSItem, vBCSTItem, pICMSST, vICMSST };
+   } else if ('ICMS20' in icms) {
+      const { orig, CST, vBC: vBCItem, pICMS, vICMS: vICMSItem } = icms.ICMS20;
+      return { orig, CST: String(CST).padStart(2, '0'), vBCItem, pICMS, vICMSItem };
+   } else if ('ICMS30' in icms) {
+      const { orig, CST, vBCST: vBCSTItem, pICMSST, vICMSST } = icms.ICMS30;
+      return { orig, CST: String(CST).padStart(2, '0'), vBCSTItem, pICMSST, vICMSST };
+   } else if ('ICMS40' in icms) {
+      const { orig, CST, vICMS: vICMSItem } = icms.ICMS40;
+      return { orig, CST: String(CST).padStart(2, '0'), vICMSItem };
+   } else if ('ICMS51' in icms) {
+      const { orig, CST, vBC: vBCItem, pICMS, vICMS: vICMSItem } = icms.ICMS51;
+      return { orig, CST: String(CST).padStart(2, '0'), vBCItem, pICMS, vICMSItem };
+   } else if ('ICMS60' in icms) {
+      const { orig, CST, vBCSTRet, vICMSSTRet } = icms.ICMS60;
+      return { orig, CST: String(CST).padStart(2, '0'), vBCSTRet, vICMSSTRet };
+   } else if ('ICMS70' in icms) {
+      const { orig, CST, vBC: vBCItem, pICMS, vICMS: vICMSItem, vBCST: vBCSTItem, pICMSST, vICMSST } = icms.ICMS70;
+      return { orig, CST: String(CST).padStart(2, '0'), vBCItem, pICMS, vICMSItem, vBCSTItem, pICMSST, vICMSST };
+   } else if ('ICMS90' in icms) {
+      const { orig, CST, vBC: vBCItem, pICMS, vICMS: vICMSItem, vBCST: vBCSTItem, pICMSST, vICMSST } = icms.ICMS90;
+      return { orig, CST: String(CST).padStart(2, '0'), vBCItem, pICMS, vICMSItem, vBCSTItem, pICMSST, vICMSST };
+   } else if ('ICMSPart' in icms) {
+      const { orig, CST, vBC: vBCItem, pICMS, vICMS: vICMSItem, vBCST: vBCSTItem, pICMSST, vICMSST } = icms.ICMSPart;
+      return { orig, CST: String(CST).padStart(2, '0'), vBCItem, pICMS, vICMSItem, vBCSTItem, pICMSST, vICMSST };
+   } else if ('ICMSST' in icms) {
+      const { orig, CST, vBCSTRet, vICMSSTRet, vBCSTDest, vICMSSTDest } = icms.ICMSST;
+      return { orig, CST: String(CST).padStart(2, '0'), vBCSTRet, vICMSSTRet, vBCSTDest, vICMSSTDest };
+   }
+   return {};
+}
+
+
 
 
 

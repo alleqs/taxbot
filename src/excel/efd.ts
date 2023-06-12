@@ -6,10 +6,12 @@ const wb = new Excel.Workbook();
 const wsEntrada = wb.addWorksheet('entradas');
 const wsSaida = wb.addWorksheet('saidas');
 
-wsEntrada.getRow(1).font = { bold: true };
-wsEntrada.getRow(1).alignment = { horizontal: 'center' };
-wsSaida.getRow(1).font = { bold: true };
-wsSaida.getRow(1).alignment = { horizontal: 'center' };
+const entrRow = wsEntrada.getRow(1);
+entrRow.font = { bold: true };
+entrRow.alignment = { horizontal: 'center' };
+const exRow = wsSaida.getRow(1);
+exRow.font = { bold: true };
+exRow.alignment = { horizontal: 'center' };
 
 const cols = [
    { header: 'Per. Apuração', key: 'anoMes', width: 13, style: { numFmt: 'yyyy-mm' } },

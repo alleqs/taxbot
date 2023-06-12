@@ -16,36 +16,44 @@ export type NfStats = {
    semProtAut: number
 }
 
+// export type ICMS_Reg = {
+//    orig: number, CST: number, vBC?: number, pICMS?: number, vICMS?: number, vBCST?: number, pICMSST?: number,
+//    vICMSST?: number, vBCSTRet?: number, vICMSSTRet?: number, vBCSTDest?: number, vICMSSTDest?: number
+// }
+
+export type ICMS =
+   | { ICMS00: { orig: number, CST: number, vBC: number, pICMS: number, vICMS: number } }
+   | { ICMS10: { orig: number, CST: number, vBC: number, pICMS: number, vICMS: number, vBCST: number, pICMSST: number, vICMSST: number } }
+   | { ICMS20: { orig: number, CST: number, vBC: number, pICMS: number, vICMS: number } }
+   | { ICMS30: { orig: number, CST: number, vBCST: number, pICMSST: number, vICMSST: number } }
+   | { ICMS40: { orig: number, CST: number, vICMS: number } }
+   | { ICMS51: { orig: number, CST: number, vBC: number, pICMS: number, vICMS: number } }
+   | { ICMS60: { orig: number, CST: number, vBCSTRet: number, vICMSSTRet: number } }
+   | { ICMS70: { orig: number, CST: number, vBC: number, pICMS: number, vICMS: number, vBCST: number, pICMSST: number, vICMSST: number } }
+   | { ICMS90: { orig: number, CST: number, vBC: number, pICMS: number, vICMS: number, vBCST: number, pICMSST: number, vICMSST: number } }
+   | { ICMSPart: { orig: number, CST: number, vBC: number, pICMS: number, vICMS: number, vBCST: number, pICMSST: number, vICMSST: number } }
+   | { ICMSST: { orig: number, CST: number, vBCSTRet: number, vBCSTDest: number, vICMSSTRet: number, vICMSSTDest: number } }
+   | { ICMSSN101: { CSOSN: number } }
+   | { ICMSSN102: { CSOSN: number } }
+   | { ICMSSN201: { CSOSN: number } }
+   | { ICMSSN202: { CSOSN: number } }
+   | { ICMSSN500: { CSOSN: number } }
+   | { ICMSSN900: { CSOSN: number } }
+
+
 type Det = {
-   imposto: {
-      ICMS:
-      | { ICMS00: { origin: number, CST: number, vBC: number, pICMS: number, vICMS: number } }
-      | { ICMS10: { origin: number, CST: number, vBC: number, pICMS: number, vICMS: number } }
-      | { ICMS30: { origin: number, CST: number, vBCST: number, pICMSST: number, vICMSST: number } }
-      | { ICMS40: { origin: number, CST: number, vICMS: number } }
-      | { ICMS51: { origin: number, CST: number, vBC: number, pICMS: number, vICMS: number } }
-      | { ICMS60: { origin: number, CST: number, vBCSTRet: number, vICMSSTRet: number } }
-      | { ICMS70: { origin: number, CST: number, vBC: number, pICMS: number, vICMS: number, vBCST: number, pICMSST: number, vICMSST: number } }
-      | { ICMS90: { origin: number, CST: number, vBC: number, pICMS: number, vICMS: number, vBCST: number, pICMSST: number, vICMSST: number } }
-      | { ICMSPart: { origin: number, CST: number, vBC: number, pICMS: number, vICMS: number, vBCST: number, pICMSST: number, vICMSST: number } }
-      | { ICMSST: { origin: number, CST: number, vBCSTRet: number, vBCSTDest: number, vICMSSTRet: number, vICMSSTDest: number } }
-      | { ICMSSN101: { CSOSN: number } }
-      | { ICMSSN102: { CSOSN: number } }
-      | { ICMSSN201: { CSOSN: number } }
-      | { ICMSSN202: { CSOSN: number } }
-      | { ICMSSN500: { CSOSN: number } }
-      | { ICMSSN900: { CSOSN: number } }
-   }
    prod: {
       NCM: number
       CFOP: number
-      // nItem: number
       cProd: string
       xProd: string
       qCom: number
       uCom: string
       vUnCom: number
       vProd: number
+   }
+   imposto: {
+      ICMS: ICMS
    }
 }
 
@@ -60,22 +68,21 @@ export type NFe = {
    NFe: {
       infNFe: {
          emit: {
-            CNPJ: string | undefined
-            IE: string | undefined
+            CNPJ: string | number | undefined
+            IE: string | number | undefined
             CRT: number
             xNome: string
             CNAE?: number
-            cUF: number
-            CPF: string
+            CPF: string | number | undefined
             enderEmit: { UF: string }
          }
          dest: {
-            CNPJ: string | undefined
-            IE: string | undefined
+            CNPJ: string | number | undefined
+            IE: string | number | undefined
             indIEDest: number
             xNome: string
             CNAE?: number
-            CPF: string
+            CPF: string | number | undefined
             enderDest: { UF: string }
          }
          det: Det[] | Det
@@ -118,7 +125,6 @@ export type NFe = {
                vST: number
                vICMSDeson: number
                vIPI: number
-               // vProd: number
             }
          }
          transp: object
@@ -128,10 +134,10 @@ export type NFe = {
 
 export type Reg = {
    dtEmissao: Date
-   CNPJEmit: string | undefined
-   IEEmit: string | undefined
+   CNPJEmit: string | number | undefined
+   IEEmit: string | number | undefined
    rsEmit: string | undefined
-   CPFEmit: string | undefined
+   CPFEmit: string | number | undefined
    ufEmit: string
    cnaeEmit: number | undefined
    descCnaeEmit: string
@@ -141,7 +147,7 @@ export type Reg = {
    numNF: number
    vProdTot: number
    vDesc: number
-   // // vNF: number
+   // vNF: number
    vFrete: number
    vSeg: number
    vOutro: number
@@ -151,10 +157,11 @@ export type Reg = {
    vST: number
    vICMSDeson: number
    vIPI: number
-   CNPJDest: string | undefined
-   IEDest: string | undefined
+   CNPJDest: string | number | undefined
+   IEDest: string | number | undefined
    rsDest: string | undefined
-   CPFDest: string | undefined
+   CPFDest: string | number | undefined
+   ufDest: string
    cnaeDest: number | undefined
    descCnaeDest: string
    natOp: string
@@ -177,10 +184,27 @@ export type Item = {
    uCom: string
    vUnCom: number
    vProd: number
+} & Partial<ICMSItem>
+
+export type ICMSItem = {
+   orig: number
+   CST: string
+   vBCItem?: number
+   pICMS?: number
+   vICMS?: number
+   vBCSTItem?: number
+   pICMSST?: number
+   vICMSST?: number
+   vBCSTRet?: number
+   vBCSTDest?: number
+   vICMSSTRet?: number
+   vICMSSTDest?: number
 }
 
+export type MiniReg = Omit<Reg, 'vProdTot' | 'vDesc' | 'vFrete' | 'vSeg' | 'vOutro' | 'vBC' | 'vICMS' | 'vBCST' | 'vST' | 'vICMSDeson' | 'vIPI'>
 export type RegFull = Reg & Item
 
+//********************* EFD ***************************
 export type Analitico = {
    cst: string
    cfop: string
@@ -201,6 +225,7 @@ export type InfoContrib = {
    iniPerApur: Date
    fimPerApur: Date
 }
+
 
 // NCM: number
 // CFOP: number

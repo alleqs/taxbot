@@ -61,8 +61,8 @@ export const App: FC = () => {
             <span className='pl-2'>Baixar planilha</span>
           </a>
         </div>
-        <ProgressBar perc={perc} loading={calculating} />
       </div>
+      <ProgressBar perc={perc} loading={calculating} />
       <Loader loading={loading} />
     </div>
   );
