@@ -34,8 +34,9 @@ export const App: FC = () => {
     if (!fileList || !link) return;
     setLoading(true);
     console.time("Time");
-    const [entradas, saidas, infoContrib] = await getEfdRegistries(fileList)
+    const [entradas, saidas, infoContrib, apOpPropria] = await getEfdRegistries(fileList)
     console.timeEnd("Time");
+    console.log(JSON.stringify(apOpPropria))
     await createEfdSheet(entradas, saidas, infoContrib, link);
     setLoading(false);
     setSumarioPronto(true);

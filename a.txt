@@ -3,22 +3,17 @@ nfs emitidas em contingencia
 nfs em amb homologação
 sem protocolo de autorização
 
-imposto: {
-   ICMS:
-   | { ICMS00: { CST: number, vBC: number, vICMS: number } }
-   | { ICMS10: { CST: number, vBC: number, vICMS: number } }
-   | { ICMS30: { CST: number, vBCST: number, vICMSST: number } }
-   | { ICMS40: { CST: number, vICMS: number } }
-   | { ICMS51: { CST: number, vBC: number, vICMS: number } }
-   | { ICMS60: { CST: number, vBCSTRet: number, vICMSSTRet: number } }
-   | { ICMS70: { CST: number, vBC: number, vICMS: number } }
-   | { ICMS90: { CST: number, vBC: number, vICMS: number } }
-   | { ICMSPart: { CST: number, vBC: number, vICMS: number } }
-   | { ICMSST: { CST: number, vBCSTRet: number, vBCSTDest: number, vICMSSTRet: number, vICMSSTDest: number } }
-   | { ICMSSN101: { CSOSN: number } }
-   | { ICMSSN102: { CSOSN: number } }
-   | { ICMSSN201: { CSOSN: number } }
-   | { ICMSSN202: { CSOSN: number } }
-   | { ICMSSN500: { CSOSN: number } }
-   | { ICMSSN900: { CSOSN: number } }
-}
+   saídas,
+   ajDocFiscal,
+   aj,
+   estCred,
+   credAq,
+   ajCredDocFiscal,
+   ajCred,
+   estDeb,
+   saldoAcc,
+   saldoDev,
+   deducoes,
+   icmsARec,
+   saldoCredorProxPer,
+   recExtraAp,

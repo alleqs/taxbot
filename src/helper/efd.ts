@@ -1,15 +1,16 @@
 import JSZip from "jszip";
-import type { Analitico, AnaliticoFull, InfoContrib } from "../types";
+import type { Analitico, AnaliticoFull, ApOpPropria, InfoContrib } from "../types";
 import { groupBy, partition } from 'lodash';
 import { getWb } from "../excel/efd";
 import { min, max } from 'lodash'
-import { uint8ArrayToString } from "./common";
+import { readFile, uint8ArrayToString } from "./common";
 
+const zip = new JSZip();
 
-export async function getEfdRegistries(fileList: FileList): Promise<[Analitico[], Analitico[], InfoContrib]> {
+export async function getEfdRegistries(fileList: FileList): Promise<[Analitico[], Analitico[], InfoContrib, ApOpPropria]> {
    const analiticoMap: Record<string, Analitico[]> = {};
+   const apOpProprias: ApOpPropria[] = [];
 
-   const zip = new JSZip();
    const len = fileList.length;
    let razaoSocial: string | undefined = undefined;
    let inscEst: string | undefined = undefined;
@@ -17,25 +18,21 @@ export async function getEfdRegistries(fileList: FileList): Promise<[Analitico[]
    let maxDate: Date | undefined = undefined;
    for (let i = 0; i < len; i++) {
       const file = fileList[i];
-      if (file.type === 'text/plain') {
-         console.log('file.name', file.name)
-      } else if (file.type === 'application/x-zip-compressed') {
-         const buffer = await file.arrayBuffer();
-         const obj = await zip.loadAsync(buffer);
-         const uint8Arr = await Object.values(obj.files).at(-1)?.async('uint8array');
-         if (!uint8Arr) throw new Error("Efd não encontrada");
-         const efd = uint8ArrayToString(uint8Arr);
-         const [{ iniPerApur, fimPerApur, nome, IE }, analitico] = getAnaliticoRegs(efd);
-         razaoSocial ??= nome;
-         inscEst ??= IE;
-         minDate = min([minDate, iniPerApur]);
-         maxDate = max([maxDate, fimPerApur]);
-         const anoMes = `${iniPerApur.getFullYear()}-${iniPerApur.getMonth() + 1}`;
-         analiticoMap[anoMes] = analitico;
-      }
+      const efd = await getFileContent(file);
+      const lines = efd.split('\r\n');
+      const { iniPerApur, fimPerApur, nome, IE } = getInfoContrib(lines)
+      const analitico = getAnaliticoRegs(lines);
+      apOpProprias.push(getApOpProprias(lines));
+      razaoSocial ??= nome;
+      inscEst ??= IE;
+      minDate = min([minDate, iniPerApur]);
+      maxDate = max([maxDate, fimPerApur]);
+      const anoMes = `${iniPerApur.getFullYear()}-${iniPerApur.getMonth() + 1}`;
+      analiticoMap[anoMes] = analitico;
    }
-   const agregadoMap = getAgregadoMap(analiticoMap);
-   const [entradas, saidas] = partition(Object.values(agregadoMap).flat(), c => +c.cfop < 4000);
+
+   const ioAgregadoMap = getIOAgregadoMap(analiticoMap);
+   const [entradas, saidas] = partition(Object.values(ioAgregadoMap).flat(), c => +c.cfop < 4000);
    if (!razaoSocial || !inscEst || !minDate || !maxDate) {
       throw new Error("Registros não encontrados");
    }
@@ -45,7 +42,23 @@ export async function getEfdRegistries(fileList: FileList): Promise<[Analitico[]
       iniPerApur: minDate,
       fimPerApur: maxDate
    }
-   return [sort(entradas), sort(saidas), infoContrib];
+   const apOpPropriaAgregado = getApAgregado(apOpProprias)
+
+   return [sort(entradas), sort(saidas), infoContrib, apOpPropriaAgregado];
+}
+
+async function getFileContent(file: File): Promise<string> {
+   if (file.type === 'text/plain') {
+      return readFile(file);
+   } else if (file.type === 'application/x-zip-compressed') {
+      const buffer = await file.arrayBuffer();
+      const obj = await zip.loadAsync(buffer);
+      const uint8Arr = await Object.values(obj.files).at(-1)?.async('uint8array');
+      if (!uint8Arr) throw new Error("Efd não encontrada");
+      const efd = uint8ArrayToString(uint8Arr);
+      return efd;
+   }
+   throw new Error("formato de arquivo não reconhecido");
 }
 
 export async function createEfdSheet(entradas: Analitico[], saidas: Analitico[], infoContrib: InfoContrib, link: HTMLAnchorElement) {
@@ -56,12 +69,21 @@ export async function createEfdSheet(entradas: Analitico[], saidas: Analitico[],
    link.download = 'IO.xlsx';
 }
 
-function getAnaliticoRegs(efd: string): [InfoContrib, Analitico[]] {
-   const lines = efd.split('\r\n');
+function getInfoContrib(lines: string[]): InfoContrib {
    const cadastro = lines.find(line => line.substring(1, 5) === '0000');
    if (!cadastro) throw new Error("Cadastro não encontrado");
    const [, , , , dtIni, dtFim, nome, , , , IE] = cadastro?.split('|');
+   return {
+      nome,
+      IE,
+      iniPerApur: new Date(+dtIni.substring(4, 10), +dtIni.substring(2, 4) - 1),
+      fimPerApur: new Date(+dtFim.substring(4, 10), +dtFim.substring(2, 4) - 1),
+   };
+}
+
+function getAnaliticoRegs(lines: string[]): Analitico[] {
    const regs: Analitico[] = [];
+
    for (const line of lines) {
       const cod = line.substring(1, 5);
       if (cod === 'C190') {
@@ -80,16 +102,38 @@ function getAnaliticoRegs(efd: string): [InfoContrib, Analitico[]] {
          regs.push(analitico);
       }
    }
-   const infoContrib = {
-      nome,
-      IE,
-      iniPerApur: new Date(+dtIni.substring(4, 10), +dtIni.substring(2, 4) - 1),
-      fimPerApur: new Date(+dtFim.substring(4, 10), +dtFim.substring(2, 4) - 1),
-   };
-   return [infoContrib, regs];
+   return regs;
 }
 
-function getAgregadoMap(analiticoMap: Record<string, Analitico[]>): Record<string, AnaliticoFull[]> {
+function getApOpProprias(lines: string[]): ApOpPropria {
+   let apOpPropria: ApOpPropria | undefined = undefined;
+   let iniPerApur: Date | undefined = undefined;
+   let fimPerApur: Date | undefined = undefined;
+
+   for (const line of lines) {
+      const cod = line.substring(1, 5);
+      if (cod === 'E100') {
+         const [, , dtIni, dtFim] = line.split('|');
+         iniPerApur = new Date(+dtIni.substring(4, 10), +dtIni.substring(2, 4) - 1, +dtIni.substring(0, 2));
+         fimPerApur = new Date(+dtFim.substring(4, 10), +dtFim.substring(2, 4) - 1, +dtFim.substring(0, 2));
+      } else if (cod === 'E110') {
+         if (!iniPerApur || !fimPerApur) throw new Error("Campo E100 não informado");
+         const [, , saídas, ajDocFiscal, aj, estCred, credAq, ajCredDocFiscal, ajCred, estDeb,
+            saldoAcc, saldoDev, deducoes, icmsARec, saldoCredorProxPer, recExtraAp] = line.split('|');
+         apOpPropria = {
+            iniPerApur, fimPerApur,
+            saídas: +saídas.replaceAll(',', '.'), ajDocFiscal: +ajDocFiscal.replaceAll(',', '.'), aj: +aj.replaceAll(',', '.'), estCred: +estCred.replaceAll(',', '.'),
+            credAq: +credAq.replaceAll(',', '.'), ajCredDocFiscal: +ajCredDocFiscal.replaceAll(',', '.'), ajCred: +ajCred.replaceAll(',', '.'), estDeb: +estDeb.replaceAll(',', '.'),
+            saldoAcc: +saldoAcc.replaceAll(',', '.'), saldoDev: +saldoDev.replaceAll(',', '.'), deducoes: +deducoes.replaceAll(',', '.'), icmsARec: +icmsARec.replaceAll(',', '.'),
+            saldoCredorProxPer: +saldoCredorProxPer.replaceAll(',', '.'), recExtraAp: +recExtraAp.replaceAll(',', '.')
+         };
+      }
+   }
+   if (!apOpPropria) throw new Error("Campo E110 não informado");
+   return apOpPropria;
+}
+
+function getIOAgregadoMap(analiticoMap: Record<string, Analitico[]>): Record<string, AnaliticoFull[]> {
    const agregadoMap: Record<string, AnaliticoFull[]> = {};
    Object.entries(analiticoMap).forEach(([anoMes, analiticoRegs]) => {
       const obj = groupBy(analiticoRegs, ({ cst, cfop, aliq }) => `${cst}-${cfop}-${aliq}`);
@@ -137,26 +181,40 @@ function sort(arr: Analitico[]) {
    return arr;
 }
 
-// export async function getEfdRegistries(fileList: FileList): Promise<[Analitico[], Analitico[]]> {
-//    const analiticoMap: Record<string, Analitico[]> = {};
-//    const zip = new JSZip();
-//    const len = fileList.length;
-//    for (let i = 0; i < len; i++) {
-//       const file = fileList[i];
-//       if (file.type === 'text/plain') {
-//          console.log('file.name', file.name)
-//       } else if (file.type === 'application/x-zip-compressed') {
-//          const buffer = await file.arrayBuffer();
-//          const obj = await zip.loadAsync(buffer);
-//          const efd = await Object.values(obj.files).at(-1)?.async('string');
-//          if (!efd) throw new Error("Efd não encontrada");
-//          const [_ini, analitico] = getAnaliticoRegs(efd);
-//          const [mes, ano] = [_ini.substring(2, 4), _ini.substring(4, 8)];
-//          const mesAno = `${mes}-${ano}`;
-//          analiticoMap[mesAno] = analitico;
-//       }
-//    }
-//    const arr = getAnaliticoAgregado(analiticoMap['03-2023']);
-//    const [entradas, saidas] = partition(arr, c => +c.cfop < 4000);
-//    return [sort(entradas), sort(saidas)]
-// }
+function getApAgregado(arr: ApOpPropria[]): ApOpPropria {
+   return arr.reduce((acc, prox) => ({
+      iniPerApur: prox.iniPerApur < acc.iniPerApur ? prox.iniPerApur : acc.iniPerApur,
+      fimPerApur: prox.fimPerApur > acc.fimPerApur ? prox.fimPerApur : acc.fimPerApur,
+      saídas: acc.saídas + prox.saídas,
+      ajDocFiscal: acc.ajDocFiscal + prox.ajDocFiscal,
+      aj: acc.aj + prox.aj,
+      estCred: acc.estCred + prox.estCred,
+      credAq: acc.credAq + prox.credAq,
+      ajCredDocFiscal: acc.ajCredDocFiscal + prox.ajCredDocFiscal,
+      ajCred: acc.ajCred + prox.ajCred,
+      estDeb: acc.estDeb + prox.estDeb,
+      saldoAcc: acc.saldoAcc + prox.saldoAcc,
+      saldoDev: acc.saldoDev + prox.saldoDev,
+      deducoes: acc.deducoes + prox.deducoes,
+      icmsARec: acc.icmsARec + prox.icmsARec,
+      saldoCredorProxPer: acc.saldoCredorProxPer + prox.saldoCredorProxPer,
+      recExtraAp: acc.recExtraAp + prox.recExtraAp,
+   }), {
+      iniPerApur: new Date(9999),
+      fimPerApur: new Date(-9999),
+      saídas: 0,
+      ajDocFiscal: 0,
+      aj: 0,
+      estCred: 0,
+      credAq: 0,
+      ajCredDocFiscal: 0,
+      ajCred: 0,
+      estDeb: 0,
+      saldoAcc: 0,
+      saldoDev: 0,
+      deducoes: 0,
+      icmsARec: 0,
+      saldoCredorProxPer: 0,
+      recExtraAp: 0,
+   });
+}

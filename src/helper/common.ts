@@ -31,3 +31,17 @@ function isNumeric(num: any) {
    return (typeof (num) === 'number' || typeof (num) === "string" && num.trim() !== '') && !isNaN(num as number);
 };
 
+export function readFile(file: File): Promise<string> {
+   return new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onload = () => {
+         const { result } = fr;
+         if (typeof result === 'string') {
+            resolve(result)
+         }
+         reject("não foi possível ler o arquivo")
+      };
+      fr.readAsText(file);
+   })
+}
+

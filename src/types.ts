@@ -205,6 +205,7 @@ export type MiniReg = Omit<Reg, 'vProdTot' | 'vDesc' | 'vFrete' | 'vSeg' | 'vOut
 export type RegFull = Reg & Item
 
 //********************* EFD ***************************
+//Bloco C
 export type Analitico = {
    cst: string
    cfop: string
@@ -226,28 +227,22 @@ export type InfoContrib = {
    fimPerApur: Date
 }
 
-
-// NCM: number
-// CFOP: number
-// nItem: number
-// cProd: string
-// xProd: string
-// qCom: number
-// uCom: number
-// vUnCom: number
-
-// export type Sumario = {
-//    // validadas: boolean
-//    vNF: number
-//    vProd: number
-//    vICMS: number
-//    vST: number
-//    vBC: number
-//    vBCST: number
-// }
-
-// export type SumarioFull = Sumario & {
-//    validas: number
-//    invalidas: number
-//    totalNFs: number
-// }
+//Bloco E
+export type ApOpPropria = {
+   iniPerApur: Date
+   fimPerApur: Date
+   saídas: number
+   ajDocFiscal: number
+   aj: number
+   estCred: number
+   credAq: number
+   ajCredDocFiscal: number
+   ajCred: number
+   estDeb: number
+   saldoAcc: number
+   saldoDev: number
+   deducoes: number
+   icmsARec: number
+   saldoCredorProxPer: number
+   recExtraAp: number
+}
