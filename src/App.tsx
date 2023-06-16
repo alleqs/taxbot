@@ -7,6 +7,7 @@ import { Loader } from './components/Loader';
 import { useSummary } from './hooks/useSummary';
 import { createNfSheet, formatNfStats } from './helper/nf';
 import { createEfdSheet, getEfdRegistries } from './helper/efd';
+import { BigButton2 } from './components/BigButton2';
 
 
 export const App: FC = () => {
@@ -46,12 +47,13 @@ export const App: FC = () => {
   return (
     <div className='bg-gray-100'>
       <NavBar />
-      <h1 className='flex justify-center text-gray-700 text-3xl mt-20'>Conversor para formato<span className='font-medium'>&nbsp;Excel</span></h1>
+      <h1 className="flex justify-center text-gray-600 text-4xl mt-20 font-['BakbakOne']">Conversor para formato<span className='font-semibold text-green-900'>&nbsp;Excel</span></h1>
       <div className='h-screen flex flex-col items-center space-y-8'>
-        <div className='flex space-x-10 mt-24'>
-          <BigButton image='nfe.png' onChange={e => handleNFChange(e.target.files)} />
-          <BigButton image='cte.png' onChange={e => handleNFChange(e.target.files)} />
-          <BigButton image='sped.png' onChange={e => handleEfdChange(e.target.files)} />
+        <div className='grid grid-cols-3 gap-10 mt-24'>
+          <BigButton2 title='NFe' iconFrom='xml.svg' iconTo='excel.png' onChange={e => handleNFChange(e.target.files)} />
+          <BigButton2 title='CTe' iconFrom='xml.svg' iconTo='excel.png' onChange={e => handleNFChange(e.target.files)} />
+          <BigButton2 title='EFD' subTitle='entrada/saída' iconFrom='txt4.png' iconTo='excel.png' onChange={e => handleEfdChange(e.target.files)} />
+          <BigButton2 title='EFD' subTitle='apuração' iconFrom='txt4.png' iconTo='pdf.svg' onChange={e => handleEfdChange(e.target.files)} />
         </div>
         <div className='space-y-4 '>
           {/* <div className='h-40 w-96 border border-gray-300 rounded-lg bg-white'>

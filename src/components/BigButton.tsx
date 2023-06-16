@@ -7,8 +7,6 @@ type Props = {
 
 export const BigButton: FC<Props> = ({ image, onChange }) => {
 
-   // console.log('image', image)
-
    return (
       <label htmlFor={image} className="flex flex-col items-center justify-center px-6 h-36 border-2 border-gray-200 rounded-lg 
       cursor-pointer bg-white dark:hover:bg-bray-800 hover:bg-gray-50">
