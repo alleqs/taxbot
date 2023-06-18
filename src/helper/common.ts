@@ -1,6 +1,10 @@
+import JSZip from "jszip";
+import { InfoContrib } from "../types";
+
+const zip = new JSZip();
 
 export function formatDate(date: Date) {
-   return `${String(1 + date.getMonth()).padStart(2, '0')}/${date.getFullYear()}`;
+   return date.toLocaleString('pt-BR', { year: 'numeric', month: '2-digit', day: '2-digit', });
 }
 
 export function formatIE(_IE: string | number | undefined) {
@@ -28,7 +32,7 @@ export function uint8ArrayToString(uint8Arr: Uint8Array) {
 }
 
 function isNumeric(num: any) {
-   return (typeof (num) === 'number' || typeof (num) === "string" && num.trim() !== '') && !isNaN(num as number);
+   return (typeof num === 'number' || typeof num === "string" && num.trim() !== '') && !isNaN(num as number);
 };
 
 export function readFile(file: File): Promise<string> {
@@ -43,5 +47,50 @@ export function readFile(file: File): Promise<string> {
       };
       fr.readAsText(file);
    })
+}
+
+export function formatNumber(n: number) {
+   return n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+export async function getFileContent(file: File): Promise<string> {
+   if (file.type === 'text/plain') {
+      return readFile(file);
+   } else if (file.type === 'application/x-zip-compressed') {
+      const buffer = await file.arrayBuffer();
+      const obj = await zip.loadAsync(buffer);
+      const uint8Arr = await Object.values(obj.files).at(-1)?.async('uint8array');
+      if (!uint8Arr) throw new Error("Efd não encontrada");
+      const efd = uint8ArrayToString(uint8Arr);
+      return efd;
+   }
+   throw new Error("formato de arquivo não reconhecido");
+}
+
+export function getInfoContrib(lines: string[]): InfoContrib {
+   const cadastro = lines.find(line => line.substring(1, 5) === '0000');
+   if (!cadastro) throw new Error("Cadastro não encontrado");
+   const [, , , , dtIni, dtFim, nome, cnpj, , , IE] = cadastro?.split('|');
+   return {
+      nome,
+      cnpj,
+      IE,
+      iniEscrit: new Date(+dtIni.substring(4, 10), +dtIni.substring(2, 4) - 1),
+      fimEscrit: new Date(+dtFim.substring(4, 10), +dtFim.substring(2, 4) - 1),
+   };
+}
+
+export function getValidatedInfoContrib(razaoSocial: string | undefined, inscEst: string | undefined, minDate: Date | undefined, maxDate: Date | undefined, cnpj: string | undefined): InfoContrib {
+   if (!razaoSocial || !inscEst || !minDate || !maxDate || !cnpj) {
+      throw new Error("Registros não encontrados");
+   }
+   return {
+      nome: razaoSocial,
+      cnpj,
+      IE: inscEst,
+      iniEscrit: minDate,
+      fimEscrit: maxDate
+   };
+
 }
 

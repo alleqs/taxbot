@@ -222,9 +222,10 @@ export type AnaliticoFull = Analitico & { anoMes: Date }
 
 export type InfoContrib = {
    nome: string
+   cnpj: string
    IE: string
-   iniPerApur: Date
-   fimPerApur: Date
+   iniEscrit: Date
+   fimEscrit: Date
 }
 
 //Bloco E
@@ -245,4 +246,10 @@ export type ApOpPropria = {
    icmsARec: number
    saldoCredorProxPer: number
    recExtraAp: number
+}
+
+export type AjDetalhe = {
+   cod: string
+   descr: string
+   val: number
 }

@@ -1,6 +1,7 @@
 import React, { type FC } from 'react';
 
 type Props = {
+   _key: string
    title: string
    subTitle?: string
    iconFrom: string
@@ -8,13 +9,13 @@ type Props = {
    onChange: React.ChangeEventHandler<HTMLInputElement>
 }
 
-export const BigButton2: FC<Props> = ({ title, subTitle, iconFrom, iconTo, onChange }) => {
+export const BigButton2: FC<Props> = ({ _key, title, subTitle, iconFrom, iconTo, onChange }) => {
 
    return (
-      <label htmlFor={title} className="flex flex-col justify-between h-48 items-center px-6  bg-gray-50 fancy-border 
-      cursor-pointer dark:hover:bg-bray-800 hover:bg-gray-100">
-         <p className="text-6xl pt-5 font-['BakbakOne'] text-gray-500 dark:text-gray-400">{title}</p>
-         {subTitle && <p className="text-lg -mt-6 text-gray-500 dark:text-gray-400">{subTitle}</p>}
+      <label htmlFor={_key} className="flex flex-col justify-between h-48 items-center px-6  bg-gray-50 fancy-border 
+      cursor-pointer  hover:bg-gray-100">
+         <p className="text-6xl pt-5 font-['BakbakOne'] text-zinc-500 ">{title}</p>
+         {subTitle && <p className="text-xl -mt-6 text-zinc-500 ">{subTitle}</p>}
          {/* <p>opa</p> */}
          <div className='flex space-x-3 pb-5'>
             {/* <img className='' width={48} height={48} src={'xml-icon-10.jpg'} alt='ícone NFe' /> */}
@@ -23,7 +24,7 @@ export const BigButton2: FC<Props> = ({ title, subTitle, iconFrom, iconTo, onCha
             <img className='' width={48} height={48} src={iconTo} alt='ícone NFe' />
          </div>
 
-         <input id={title} directory="" webkitdirectory="" type="file" className="hidden" multiple onChange={onChange} />
+         <input id={_key} directory="" webkitdirectory="" type="file" className="hidden" multiple onChange={onChange} />
       </label>
    );
 };

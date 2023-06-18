@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-pdf/renderer": "^3.1.12",
     "exceljs": "^4.3.0",
     "fast-xml-parser": "^4.2.2",
     "jszip": "^3.10.1",

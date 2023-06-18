@@ -27,8 +27,8 @@ const cols = [
 ];
 
 
-export function getWb(entradas: Analitico[], saidas: Analitico[], { nome, IE, iniPerApur, fimPerApur }: InfoContrib) {
-   const titulo = `${nome}     IE: ${formatIE(IE)}     Per. apuração: ${formatDate(iniPerApur)} a ${formatDate(fimPerApur)}`;
+export function getWb(entradas: Analitico[], saidas: Analitico[], { nome, IE, iniEscrit, fimEscrit }: InfoContrib) {
+   const titulo = `${nome}     IE: ${formatIE(IE)}     Per. apuração: ${formatDate(iniEscrit)} a ${formatDate(fimEscrit)}`;
    wsEntrada.columns = cols;
    wsSaida.columns = cols;
    wsEntrada.addRows(entradas);
