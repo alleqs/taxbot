@@ -9,7 +9,7 @@ import { createEfdSheet, getEfdRegistries } from './helper/efd-io';
 import { BigButton } from './components/BigButton';
 import { getApPDF, getEfdDetalheApuracao } from './helper/efd-apuracao';
 import { getGroupedOp, getSummaryPDF } from './helper/efd-resumo';
-
+import Typewriter, { TypewriterClass } from 'typewriter-effect';
 
 export const App: FC = () => {
 
@@ -76,7 +76,12 @@ export const App: FC = () => {
   return (
     <div className='bg-gray-100'>
       <NavBar />
-      <h1 className="flex justify-center text-gray-600 text-4xl mt-20 font-['BakbakOne']">Conversor para formato<span className='font-semibold text-green-900'>&nbsp;Excel</span></h1>
+      {/* <h1 className="flex justify-center text-gray-600 text-4xl mt-20 font-['BakbakOne']">Conversor para formato<span className='font-semibold text-green-900'>&nbsp;Excel</span></h1> */}
+      <div className="flex justify-center text-gray-600 text-4xl mt-20 font-['BakbakOne']">
+        <div className='w-[620px] h-[60px]'>
+          <TipeWrite />
+        </div>
+      </div>
       <div className='h-screen flex flex-col items-center space-y-8'>
         <div className='space-y-8'>
           <div className='grid grid-cols-3 gap-10 mt-24'>
@@ -106,4 +111,28 @@ export const App: FC = () => {
 function handlerWrap(handler: (fileList: FileList | null) => void, e: ChangeEvent<HTMLInputElement>) {
   handler(e.target.files);
   e.target.value = '';
+}
+
+const TipeWrite: FC = () => {
+
+  function init(typewriter: TypewriterClass) {
+    typewriter
+      .pauseFor(1700)
+      .typeString('Converta documentos fiscais e<br>')
+      .typeString('arquivos da EFD para formato <strong><span style="color: #15803d;">Excel</span></strong>')
+      .pauseFor(1700)
+      .deleteChars(5)
+      .typeString('<strong><span style="color: #ef4444;">PDF</span></strong>')
+      .pauseFor(1700)
+      .deleteChars(3)
+      .typeString('<strong><span style="color: black;">CSV</span></strong>')
+      .pauseFor(500)
+      .pauseFor(1700)
+      .start();
+  }
+  return (
+    <Typewriter
+      options={{ autoStart: true, loop: true, delay: 80, }}
+      onInit={init} />
+  );
 }
