@@ -9,7 +9,9 @@ const styles = StyleSheet.create({
 
    page: {
       flexDirection: 'column',
-      marginTop: 30,
+      marginTop: 15,
+      // paddingBottom: 20,
+      // marginBottom: 20,
    },
    line: {
       marginHorizontal: 30,
@@ -67,32 +69,15 @@ export function Resumo(infoContrib: InfoContrib, { entrTribInt, entrTribNaoInt, 
 
    return (
       <Document>
-         {Resumo2(infoContrib, 1, 'ENTRADAS', entrTribInt, entrTribNaoInt, entrNaoTribInt, entrNaoTribNaoInt)}
-         {Resumo2(infoContrib, 2, 'SAÍDAS', sdTribInt, sdTribNaoInt, sdNaoTribInt, sdNaoTribNaoInt)}
-         {/* <Page size="A4" style={styles.page}>
-            {Timbre()}
-            {Contribuinte(infoContrib)}
-
-            <View style={styles.line} />
-            <View style={styles.headerContainer}>
-               <Text style={styles.header}>1. ENTRADAS</Text>
-            </View>
-
-            {getDetailTable(entrTribInt, '1.1. Operações Tributáveis', '1.1.1. Operações Internas')}
-            {getDetailTable(entrTribNaoInt, '1.1.2. Operações Interestaduais / Importação')}
-
-            {getDetailTable(entrNaoTribInt, '1.2. Operações Não Tributáveis', '1.2.1. Operações Internas')}
-            {getDetailTable(entrNaoTribNaoInt, '1.2.2. Operações Interestaduais / Importação')}
-
-         </Page> */}
+         {PagResumo(infoContrib, 1, 'ENTRADAS', entrTribInt, entrTribNaoInt, entrNaoTribInt, entrNaoTribNaoInt)}
+         {PagResumo(infoContrib, 2, 'SAÍDAS', sdTribInt, sdTribNaoInt, sdNaoTribInt, sdNaoTribNaoInt)}
       </Document>
    );
 }
 
-export function Resumo2(infoContrib: InfoContrib, index: number, title: string, opsTribInt: Summary[], opsTribNaoInt: Summary[], opsNaoTribInt: Summary[], opsNaoTribNaoInt: Summary[]) {
+export function PagResumo(infoContrib: InfoContrib, index: number, title: string, opsTribInt: Summary[], opsTribNaoInt: Summary[], opsNaoTribInt: Summary[], opsNaoTribNaoInt: Summary[]) {
 
    return (
-      // <Document>
       <Page size="A4" style={styles.page}>
          {Timbre()}
          {Contribuinte(infoContrib)}
@@ -109,7 +94,6 @@ export function Resumo2(infoContrib: InfoContrib, index: number, title: string, 
          {getDetailTable(opsNaoTribNaoInt, `${index}.2.2. Operações Interestaduais / Importação`)}
 
       </Page>
-      // </Document>
    );
 }
 
@@ -150,8 +134,22 @@ const detailStyle = StyleSheet.create({
       // justifyContent: 'space-around',
       marginHorizontal: 40
    },
+   // colLeft: {
+   //    flex: 1,
+   //    fontSize: 11,
+   //    fontFamily: 'Helvetica-Bold',
+   //    paddingVertical: 3,
+   //    textAlign: 'left',
+   // },
+   colCentro: {
+      flex: 12.5,
+      fontSize: 11,
+      fontFamily: 'Helvetica-Bold',
+      paddingVertical: 3,
+      textAlign: 'center',
+   },
    coluna: {
-      flex: 1,
+      flex: 25,
       fontSize: 11,
       fontFamily: 'Helvetica-Bold',
       paddingVertical: 3,
@@ -162,15 +160,26 @@ const detailStyle = StyleSheet.create({
       // justifyContent: 'space-between',
       marginHorizontal: 40
    },
-   item: {
-      flex: 1,
+   // itemLeft: {
+   //    flex: 12.5,
+   //    fontSize: 10,
+   //    marginTop: 3,
+   //    paddingVertical: 3,
+   //    textAlign: 'left',
+   // },
+   itemCenter: {
+      flex: 12.5,
       fontSize: 10,
       marginTop: 3,
       paddingVertical: 3,
-      // paddingHorizontal: 10,
-      // width: 33.333,
+      textAlign: 'center',
+   },
+   item: {
+      flex: 25,
+      fontSize: 10,
+      marginTop: 3,
+      paddingVertical: 3,
       textAlign: 'right',
-      // textTransform: 'uppercase'
    },
 })
 
@@ -185,8 +194,8 @@ function getDetailTable(analiticoArr: Summary[], title: string, subTitle?: strin
          </View>}
          <View style={detailStyle.tableContainer}>
             <View style={detailStyle.tableHeaderContainer}>
-               <Text style={detailStyle.coluna}>CFOP</Text>
-               <Text style={detailStyle.coluna}>Alíquota</Text>
+               <Text style={detailStyle.colCentro}>CFOP</Text>
+               <Text style={detailStyle.colCentro}>Alíquota</Text>
                <Text style={detailStyle.coluna}>Vl. Contáb.</Text>
                <Text style={detailStyle.coluna}>Base Cálc.</Text>
                <Text style={detailStyle.coluna}>ICMS Cred.</Text>
@@ -196,8 +205,8 @@ function getDetailTable(analiticoArr: Summary[], title: string, subTitle?: strin
             const [cfop, aliq] = cfopAliq.split('-')
             return (
                <View key={i} style={{ ...detailStyle.itemContainer, ...(i % 2 === 1) && { backgroundColor: '#f5f5f5' }, }}>
-                  <Text style={detailStyle.item}>{cfop}</Text>
-                  <Text style={detailStyle.item}>{aliq}</Text>
+                  <Text style={detailStyle.itemCenter}>{cfop}</Text>
+                  <Text style={detailStyle.itemCenter}>{aliq}</Text>
                   <Text style={detailStyle.item}>{formatNumber(valOper)}</Text>
                   <Text style={detailStyle.item}>{formatNumber(bc)}</Text>
                   <Text style={detailStyle.item}>{formatNumber(icms)}</Text>

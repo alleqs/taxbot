@@ -89,7 +89,7 @@ export const App: FC = () => {
 
           <MsgBox />
 
-          <a ref={linkRef} href="#" onClick={() => setFileType(undefined)}
+          <a ref={linkRef} href="" onClick={() => setFileType(undefined)}
             className={`w-40 ${fileType ? 'visible animate-fade' : 'invisible'} flex text-white bg-green-700 hover:bg-green-800 focus:ring-green-300 focus:ring-4 
             font-medium rounded-lg text-sm px-4 py-2.5 mr-2 mb-2 focus:outline-none`}>
             <svg className="fill-current w-4 h-4 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M13 8V2H7v6H2l8 8 8-8h-5zM0 18h20v2H0v-2z" /></svg>
