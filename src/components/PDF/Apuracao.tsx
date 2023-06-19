@@ -13,6 +13,20 @@ const styles = StyleSheet.create({
       flexDirection: 'column',
       marginTop: 30,
    },
+   headerContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      marginTop: 10,
+      marginBottom: 7,
+   },
+   header: {
+      fontFamily: 'Helvetica',
+      fontSize: 12,
+   },
+   headerDetail: {
+      fontFamily: 'Helvetica-Oblique',
+      fontSize: 12,
+   },
    line: {
       marginHorizontal: 30,
       borderTop: '1px solid #EEE',
@@ -61,6 +75,12 @@ export function Apuracao(infoContrib: InfoContrib, apuracao: ApOpPropria, tpAjMa
       <Document>
          <Page size="A4" style={styles.page}>
             {Timbre()}
+            <View style={styles.line} />
+            <View style={styles.headerContainer}>
+               <Text style={styles.header}>REGISTROS FISCAIS DA APURAÇÃO DO ICMS </Text>
+               <Text style={{ ...styles.headerDetail }}>- OPERAÇÕES PRÓPRIAS</Text>
+            </View>
+            <View style={styles.line} />
             {Contribuinte(infoContrib, [apuracao.iniPerApur, apuracao.fimPerApur])}
 
             <View style={styles.tableContainer}>

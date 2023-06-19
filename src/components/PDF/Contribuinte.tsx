@@ -3,24 +3,7 @@ import { formatCNPJ, formatDate, formatIE } from '../../helper/common';
 import type { InfoContrib } from '../../types';
 
 const styles = StyleSheet.create({
-   headerContainer: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      marginTop: 10,
-      marginBottom: 7,
-   },
-   header: {
-      fontFamily: 'Helvetica',
-      fontSize: 12,
-   },
-   headerDetail: {
-      fontFamily: 'Helvetica-Oblique',
-      fontSize: 12,
-   },
-   line: {
-      marginHorizontal: 30,
-      borderTop: '1px solid #EEE',
-   },
+
    dadoContribContainer: {
       marginTop: 10,
       marginBottom: 20,
@@ -49,37 +32,32 @@ const styles = StyleSheet.create({
 export function Contribuinte(infoContrib: InfoContrib, dtTuple?: [Date, Date]) {
 
    return (
-      <>
-         <View style={styles.line} />
-         <View style={styles.headerContainer}>
-            <Text style={styles.header}>REGISTROS FISCAIS DA APURAÇÃO DO ICMS </Text>
-            <Text style={{ ...styles.headerDetail }}>- OPERAÇÕES PRÓPRIAS</Text>
+      // <>
+
+      <View style={styles.dadoContribContainer}>
+         <View style={styles.dadoContribLinha}>
+            <Text style={styles.dadoContribChave}>CONTRIBUINTE: </Text>
+            <Text style={styles.dadoContribValor}>{infoContrib.nome}</Text>
          </View>
-         <View style={styles.line} />
-         <View style={styles.dadoContribContainer}>
+         <View style={styles.dadoContribInscrContainer}>
             <View style={styles.dadoContribLinha}>
-               <Text style={styles.dadoContribChave}>CONTRIBUINTE: </Text>
-               <Text style={styles.dadoContribValor}>{infoContrib.nome}</Text>
-            </View>
-            <View style={styles.dadoContribInscrContainer}>
-               <View style={styles.dadoContribLinha}>
-                  <Text style={styles.dadoContribChave}>CNPJ/CPF: </Text>
-                  <Text style={styles.dadoContribValor}>{formatCNPJ(infoContrib.cnpj)}</Text>
-               </View>
-               <View style={styles.dadoContribLinha}>
-                  <Text style={styles.dadoContribChave}>INSCRIÇÃO ESTADUAL: </Text>
-                  <Text style={styles.dadoContribValor}>{formatIE(infoContrib.IE)}</Text>
-               </View>
+               <Text style={styles.dadoContribChave}>CNPJ/CPF: </Text>
+               <Text style={styles.dadoContribValor}>{formatCNPJ(infoContrib.cnpj)}</Text>
             </View>
             <View style={styles.dadoContribLinha}>
-               <Text style={styles.dadoContribChave}>PERÍODO DA ESCRITURAÇÃO: </Text>
-               <Text style={styles.dadoContribValor}>{`${formatDate(infoContrib.iniEscrit)} a ${formatDate(infoContrib.fimEscrit)}`}</Text>
+               <Text style={styles.dadoContribChave}>INSCRIÇÃO ESTADUAL: </Text>
+               <Text style={styles.dadoContribValor}>{formatIE(infoContrib.IE)}</Text>
             </View>
-            {dtTuple && <View style={styles.dadoContribLinha}>
-               <Text style={styles.dadoContribChave}>PERÍODO DA APURAÇÃO: </Text>
-               <Text style={styles.dadoContribValor}>{`${formatDate(dtTuple[0])} a ${formatDate(dtTuple[1])}`}</Text>
-            </View>}
          </View>
-      </>
+         <View style={styles.dadoContribLinha}>
+            <Text style={styles.dadoContribChave}>PERÍODO DA ESCRITURAÇÃO: </Text>
+            <Text style={styles.dadoContribValor}>{`${formatDate(infoContrib.iniEscrit)} a ${formatDate(infoContrib.fimEscrit)}`}</Text>
+         </View>
+         {dtTuple && <View style={styles.dadoContribLinha}>
+            <Text style={styles.dadoContribChave}>PERÍODO DA APURAÇÃO: </Text>
+            <Text style={styles.dadoContribValor}>{`${formatDate(dtTuple[0])} a ${formatDate(dtTuple[1])}`}</Text>
+         </View>}
+      </View>
+      // </>
    );
 }

@@ -18,6 +18,16 @@ const styles = StyleSheet.create({
       marginHorizontal: 30,
       borderTop: '1px solid #EEE',
    },
+   mainHeaderContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      marginTop: 10,
+      marginBottom: 7,
+   },
+   mainHeader: {
+      fontFamily: 'Helvetica',
+      fontSize: 12,
+   },
    headerContainer: {
       flexDirection: 'row',
       justifyContent: 'center',
@@ -44,6 +54,11 @@ export function PagResumo(infoContrib: InfoContrib, index: number, title: string
    return (
       <Page size="A4" style={styles.page}>
          {Timbre()}
+         <View style={styles.line} />
+         <View style={styles.mainHeaderContainer}>
+            <Text style={styles.mainHeader}>APURAÇÃO OP. PRÓPRIAS - ANALÍTICO</Text>
+         </View>
+         <View style={styles.line} />
          {Contribuinte(infoContrib)}
 
          <View style={styles.line} />
