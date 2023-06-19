@@ -16,11 +16,6 @@ export type NfStats = {
    semProtAut: number
 }
 
-// export type ICMS_Reg = {
-//    orig: number, CST: number, vBC?: number, pICMS?: number, vICMS?: number, vBCST?: number, pICMSST?: number,
-//    vICMSST?: number, vBCSTRet?: number, vICMSSTRet?: number, vBCSTDest?: number, vICMSSTDest?: number
-// }
-
 export type ICMS =
    | { ICMS00: { orig: number, CST: number, vBC: number, pICMS: number, vICMS: number } }
    | { ICMS10: { orig: number, CST: number, vBC: number, pICMS: number, vICMS: number, vBCST: number, pICMSST: number, vICMSST: number } }
@@ -252,4 +247,22 @@ export type AjDetalhe = {
    cod: string
    descr: string
    val: number
+}
+
+export type Summary = {
+   cfopAliq: `${number}-${number}`
+   valOper: number
+   bc: number
+   icms: number
+}
+
+export type ResumoAnalitico = {
+   entrTribInt: Summary[]
+   entrTribNaoInt: Summary[]
+   entrNaoTribInt: Summary[]
+   entrNaoTribNaoInt: Summary[]
+   sdTribInt: Summary[]
+   sdTribNaoInt: Summary[]
+   sdNaoTribInt: Summary[]
+   sdNaoTribNaoInt: Summary[]
 }

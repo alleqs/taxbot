@@ -1,21 +1,28 @@
 import React, { type FC } from 'react';
 
 type Props = {
-   image: string
+   _key: string
+   title: string
+   subTitle?: string
+   iconFrom: string
+   iconTo: string
    onChange: React.ChangeEventHandler<HTMLInputElement>
 }
 
-export const BigButton: FC<Props> = ({ image, onChange }) => {
+export const BigButton: FC<Props> = ({ _key, title, subTitle, iconFrom, iconTo, onChange }) => {
 
    return (
-      <label htmlFor={image} className="flex flex-col items-center justify-center px-6 h-36 border-2 border-gray-200 rounded-lg 
-      cursor-pointer bg-white hover:bg-gray-50">
-         <div className="flex flex-col items-center justify-center pt-5 pb-1">
-            <img className='mb-3' width={100} height={100} src={image} alt='ícone NFe' />
-            {/* <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Clique</span> ou arraste</p> */}
-            {/* <p className="text-xs text-gray-500 dark:text-gray-400">apenas XML</p> */}
+      <label htmlFor={_key} className="flex flex-col justify-between h-48 items-center px-6  bg-gray-50 fancy-border 
+      cursor-pointer  hover:bg-gray-100">
+         <p className="text-6xl pt-5 font-['BakbakOne'] text-zinc-500 ">{title}</p>
+         {subTitle && <p className="text-xl -mt-6 text-zinc-600 font-semibold">{subTitle}</p>}
+         <div className='flex space-x-3 pb-5'>
+            <img className='' width={40} height={40} src={iconFrom} alt='ícone NFe' />
+            <span className='text-4xl text-gray-500'>{'»'}</span>
+            <img className='' width={48} height={48} src={iconTo} alt='ícone NFe' />
          </div>
-         <input id={image} directory="" webkitdirectory="" type="file" className="hidden" multiple onChange={onChange} />
+
+         <input id={_key} directory="" webkitdirectory="" type="file" className="hidden" multiple onChange={onChange} />
       </label>
    );
 };

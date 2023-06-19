@@ -6,7 +6,7 @@
 
 @font-face {
    font-family: 'BakbakOne';
-   src: local('BakbakOne'), url(./fonts/BakbakOne-Regular.ttf) format('woff');
+   src: local('BakbakOne'), url(./assets/fonts/BakbakOne-Regular.ttf) format('woff');
 }
 
 .spinner {

@@ -1,9 +1,8 @@
 import type { AjDetalhe, ApOpPropria, InfoContrib } from "../types";
-import { groupBy } from 'lodash';
-import { min, max } from 'lodash'
+import { min, max, groupBy } from 'lodash'
 import { getFileContent, getInfoContrib, getValidatedInfoContrib } from "./common";
 import { pdf } from "@react-pdf/renderer";
-import { Apuracao } from "../components/Apuracao";
+import { Apuracao } from "../components/PDF/Apuracao";
 
 
 export async function getEfdDetalheApuracao(fileList: FileList): Promise<[ApOpPropria, Record<number, AjDetalhe[]>, InfoContrib]> {

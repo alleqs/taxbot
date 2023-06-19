@@ -1,8 +1,10 @@
-import { Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
-import { formatCNPJ, formatDate, formatIE, formatNumber } from '../helper/common';
-import type { AjDetalhe, ApOpPropria, InfoContrib } from '../types';
-import { codAjApur } from '../constants/codAjApur';
+import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
+import { formatNumber } from '../../helper/common';
+import type { AjDetalhe, ApOpPropria, InfoContrib } from '../../types';
+import { codAjApur } from '../../constants/codAjApur';
 import { sum } from 'lodash';
+import { Timbre } from './Timbre';
+import { Contribuinte } from './Contribuinte';
 
 
 const styles = StyleSheet.create({
@@ -11,58 +13,10 @@ const styles = StyleSheet.create({
       flexDirection: 'column',
       marginTop: 30,
    },
-   imageContainer: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      marginBottom: 10
-   },
-   image: {
-      width: '200px',
-   },
-   headerContainer: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      marginTop: 10,
-      marginBottom: 7,
-   },
-   header: {
-      fontFamily: 'Helvetica',
-      fontSize: 12,
-   },
-   headerDetail: {
-      fontFamily: 'Helvetica-Oblique',
-      fontSize: 12,
-   },
-
    line: {
       marginHorizontal: 30,
       borderTop: '1px solid #EEE',
    },
-
-   dadoContribContainer: {
-      marginTop: 10,
-      marginBottom: 20,
-      paddingHorizontal: 10,
-   },
-   dadoContribLinha: {
-      flexDirection: 'row',
-      marginHorizontal: 30,
-      marginTop: 10
-   },
-   dadoContribChave: {
-      fontSize: 11,
-      fontFamily: 'Helvetica-Bold'
-      // fontWeight: 'extrabold',
-      // textAlign: 'center',
-   },
-   dadoContribValor: {
-      fontSize: 11,
-   },
-   dadoContribInscrContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-   },
-
    headerTitle: {
       flexDirection: 'row',
    },
@@ -94,7 +48,6 @@ const styles = StyleSheet.create({
    },
    item: {
       fontSize: 10,
-      // marginHorizontal: 30,
       marginTop: 3,
       paddingVertical: 3,
       paddingHorizontal: 10,
@@ -107,39 +60,8 @@ export function Apuracao(infoContrib: InfoContrib, apuracao: ApOpPropria, tpAjMa
    return (
       <Document>
          <Page size="A4" style={styles.page}>
-            <View fixed style={styles.imageContainer}>
-               <Image style={styles.image} src={'/src/assets/timbre.png'} />
-            </View>
-            <View style={styles.line} />
-            <View style={styles.headerContainer}>
-               <Text style={styles.header}>REGISTROS FISCAIS DA APURAÇÃO DO ICMS </Text>
-               <Text style={{ ...styles.headerDetail }}>- OPERAÇÕES PRÓPRIAS</Text>
-            </View>
-            <View style={styles.line} />
-            <View style={styles.dadoContribContainer}>
-               <View style={styles.dadoContribLinha}>
-                  <Text style={styles.dadoContribChave}>CONTRIBUINTE: </Text>
-                  <Text style={styles.dadoContribValor}>{infoContrib.nome}</Text>
-               </View>
-               <View style={styles.dadoContribInscrContainer}>
-                  <View style={styles.dadoContribLinha}>
-                     <Text style={styles.dadoContribChave}>CNPJ/CPF: </Text>
-                     <Text style={styles.dadoContribValor}>{formatCNPJ(infoContrib.cnpj)}</Text>
-                  </View>
-                  <View style={styles.dadoContribLinha}>
-                     <Text style={styles.dadoContribChave}>INSCRIÇÃO ESTADUAL: </Text>
-                     <Text style={styles.dadoContribValor}>{formatIE(infoContrib.IE)}</Text>
-                  </View>
-               </View>
-               <View style={styles.dadoContribLinha}>
-                  <Text style={styles.dadoContribChave}>PERÍODO DA ESCRITURAÇÃO: </Text>
-                  <Text style={styles.dadoContribValor}>{`${formatDate(infoContrib.iniEscrit)} a ${formatDate(infoContrib.fimEscrit)}`}</Text>
-               </View>
-               <View style={styles.dadoContribLinha}>
-                  <Text style={styles.dadoContribChave}>PERÍODO DA APURAÇÃO: </Text>
-                  <Text style={styles.dadoContribValor}>{`${formatDate(apuracao.iniPerApur)} a ${formatDate(apuracao.fimPerApur)}`}</Text>
-               </View>
-            </View>
+            {Timbre()}
+            {Contribuinte(infoContrib, [apuracao.iniPerApur, apuracao.fimPerApur])}
 
             <View style={styles.tableContainer}>
                <View style={styles.itemContainer}>
@@ -224,7 +146,6 @@ const detailStyle = StyleSheet.create({
    subHeader: {
       fontFamily: 'Helvetica-BoldOblique',
       fontSize: 12,
-      // textAlign: 'center'
    },
    totalContainer: {
       flexDirection: 'row',
@@ -234,7 +155,6 @@ const detailStyle = StyleSheet.create({
    total: {
       fontFamily: 'Helvetica-Bold',
       fontSize: 10,
-      // textTransform: 'uppercase',
       paddingVertical: 3,
       paddingHorizontal: 10,
    }

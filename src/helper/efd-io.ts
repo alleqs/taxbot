@@ -1,7 +1,6 @@
 import type { Analitico, AnaliticoFull, InfoContrib } from "../types";
-import { groupBy, partition } from 'lodash';
+import { groupBy, partition, min, max } from 'lodash';
 import { getWb } from "../excel/efd";
-import { min, max } from 'lodash'
 import { getFileContent, getInfoContrib, getValidatedInfoContrib } from "./common";
 
 
