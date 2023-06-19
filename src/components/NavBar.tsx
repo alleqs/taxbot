@@ -18,7 +18,7 @@ export const NavBar: FC<Props> = ({ }) => {
                   <a className="text-blue-500 hover:text-blue-800" href="#">Link</a>
                </li> */}
             <div className="mr-6">
-               <a className="text-gray-700 hover:text-blue-800" href="#">Documentação</a>
+               <a className="font-semibold text-gray-600 hover:text-gray-900" href="#">Documentação</a>
             </div>
             {/* <li className="mr-6">
                   <a className="text-gray-400 cursor-not-allowed" href="#">Disabled</a>

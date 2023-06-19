@@ -4,6 +4,7 @@ import type { InfoContrib, ResumoAnalitico, Summary } from '../../types';
 import { sum } from 'lodash';
 import { Timbre } from './Timbre';
 import { Contribuinte } from './Contribuinte';
+import { cfopMap } from '../../constants/cfopMap';
 
 const styles = StyleSheet.create({
 
@@ -21,48 +22,11 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'center',
       marginTop: 10,
-      // marginBottom: 7,
    },
    header: {
       fontFamily: 'Helvetica-Bold',
       fontSize: 12,
    },
-   // headerTitle: {
-   //    flexDirection: 'row',
-   // },
-   // tableContainer: {
-   //    marginTop: 3
-   // },
-   // descrição: {
-   //    fontSize: 11,
-   //    fontFamily: 'Helvetica-Bold',
-   //    width: '50%',
-   //    backgroundColor: '#eee',
-   //    textAlign: 'left',
-   //    paddingVertical: 3,
-   //    paddingLeft: 160
-   // },
-   // valor: {
-   //    fontSize: 11,
-   //    fontFamily: 'Helvetica-Bold',
-   //    width: '50%',
-   //    backgroundColor: '#eee',
-   //    textAlign: 'right',
-   //    paddingVertical: 3,
-   //    paddingRight: 10
-   // },
-   // itemContainer: {
-   //    flexDirection: 'row',
-   //    justifyContent: 'space-between',
-   //    marginHorizontal: 30
-   // },
-   // item: {
-   //    fontSize: 10,
-   //    marginTop: 3,
-   //    paddingVertical: 3,
-   //    paddingHorizontal: 10,
-   //    textTransform: 'uppercase'
-   // },
 });
 
 export function Resumo(infoContrib: InfoContrib, { entrTribInt, entrTribNaoInt, entrNaoTribInt, entrNaoTribNaoInt, sdTribInt, sdTribNaoInt, sdNaoTribInt, sdNaoTribNaoInt }: ResumoAnalitico) {
@@ -103,6 +67,10 @@ const detailStyle = StyleSheet.create({
    detailContainer: {
       // marginTop: 15
    },
+   line: {
+      marginHorizontal: 40,
+      borderTop: '1px solid #EEE',
+   },
    subHeaderContainer: {
       // flexDirection: 'row',
       // justifyContent: 'flex-start',
@@ -114,19 +82,8 @@ const detailStyle = StyleSheet.create({
       fontFamily: 'Helvetica-Oblique',
       fontSize: 12,
    },
-   totalContainer: {
-      flexDirection: 'row',
-      justifyContent: 'flex-end',
-      marginHorizontal: 30
-   },
-   total: {
-      fontFamily: 'Helvetica-Bold',
-      fontSize: 10,
-      paddingVertical: 3,
-      paddingHorizontal: 10,
-   },
    tableContainer: {
-      marginTop: 3,
+      marginTop: 5,
    },
    tableHeaderContainer: {
       backgroundColor: '#eee',
@@ -134,22 +91,29 @@ const detailStyle = StyleSheet.create({
       // justifyContent: 'space-around',
       marginHorizontal: 40
    },
-   // colLeft: {
-   //    flex: 1,
-   //    fontSize: 11,
-   //    fontFamily: 'Helvetica-Bold',
-   //    paddingVertical: 3,
-   //    textAlign: 'left',
-   // },
    colCentro: {
-      flex: 12.5,
+      flex: 7,
       fontSize: 11,
       fontFamily: 'Helvetica-Bold',
       paddingVertical: 3,
       textAlign: 'center',
    },
-   coluna: {
-      flex: 25,
+   colAliq: {
+      flex: 5,
+      fontSize: 11,
+      fontFamily: 'Helvetica-Bold',
+      paddingVertical: 3,
+      textAlign: 'center',
+   },
+   colDesc: {
+      flex: 43,
+      fontSize: 11,
+      fontFamily: 'Helvetica-Bold',
+      paddingVertical: 3,
+      textAlign: 'center',
+   },
+   colunaValor: {
+      flex: 15,
       fontSize: 11,
       fontFamily: 'Helvetica-Bold',
       paddingVertical: 3,
@@ -160,24 +124,51 @@ const detailStyle = StyleSheet.create({
       // justifyContent: 'space-between',
       marginHorizontal: 40
    },
-   // itemLeft: {
-   //    flex: 12.5,
-   //    fontSize: 10,
-   //    marginTop: 3,
-   //    paddingVertical: 3,
-   //    textAlign: 'left',
-   // },
    itemCenter: {
-      flex: 12.5,
+      flex: 7,
       fontSize: 10,
       marginTop: 3,
       paddingVertical: 3,
       textAlign: 'center',
    },
-   item: {
-      flex: 25,
+   itemAliq: {
+      flex: 5,
       fontSize: 10,
       marginTop: 3,
+      paddingVertical: 3,
+      textAlign: 'center',
+   },
+   itemDesc: {
+      flex: 43,
+      fontSize: 8,
+      marginTop: 3,
+      paddingVertical: 3,
+      textAlign: 'left',
+   },
+   itemValor: {
+      flex: 15,
+      fontSize: 10,
+      marginTop: 3,
+      paddingVertical: 3,
+      textAlign: 'right',
+   },
+   totalContainer: {
+      flexDirection: 'row',
+      // justifyContent: 'flex-end',
+      marginHorizontal: 40
+   },
+   totalBlank: {
+      flex: 55,
+      fontFamily: 'Helvetica-Bold',
+      fontSize: 10,
+      paddingVertical: 3,
+      // paddingHorizontal: 10,
+      textAlign: 'right',
+   },
+   total: {
+      flex: 15,
+      fontFamily: 'Helvetica-Bold',
+      fontSize: 10,
       paddingVertical: 3,
       textAlign: 'right',
    },
@@ -195,10 +186,11 @@ function getDetailTable(analiticoArr: Summary[], title: string, subTitle?: strin
          <View style={detailStyle.tableContainer}>
             <View style={detailStyle.tableHeaderContainer}>
                <Text style={detailStyle.colCentro}>CFOP</Text>
-               <Text style={detailStyle.colCentro}>Alíquota</Text>
-               <Text style={detailStyle.coluna}>Vl. Contáb.</Text>
-               <Text style={detailStyle.coluna}>Base Cálc.</Text>
-               <Text style={detailStyle.coluna}>ICMS Cred.</Text>
+               <Text style={detailStyle.colDesc}>Descr.</Text>
+               <Text style={detailStyle.colAliq}>Alq.</Text>
+               <Text style={detailStyle.colunaValor}>Vl. Contáb.</Text>
+               <Text style={detailStyle.colunaValor}>Base Cálc.</Text>
+               <Text style={detailStyle.colunaValor}>ICMS</Text>
             </View>
          </View>
          {analiticoArr.map(({ cfopAliq, valOper, bc, icms }, i) => {
@@ -206,15 +198,18 @@ function getDetailTable(analiticoArr: Summary[], title: string, subTitle?: strin
             return (
                <View key={i} style={{ ...detailStyle.itemContainer, ...(i % 2 === 1) && { backgroundColor: '#f5f5f5' }, }}>
                   <Text style={detailStyle.itemCenter}>{cfop}</Text>
-                  <Text style={detailStyle.itemCenter}>{aliq}</Text>
-                  <Text style={detailStyle.item}>{formatNumber(valOper)}</Text>
-                  <Text style={detailStyle.item}>{formatNumber(bc)}</Text>
-                  <Text style={detailStyle.item}>{formatNumber(icms)}</Text>
+                  <Text style={detailStyle.itemDesc}>{cfopMap[+cfop]}</Text>
+                  <Text style={detailStyle.itemAliq}>{aliq}</Text>
+                  <Text style={detailStyle.itemValor}>{formatNumber(valOper)}</Text>
+                  <Text style={detailStyle.itemValor}>{formatNumber(bc)}</Text>
+                  <Text style={detailStyle.itemValor}>{formatNumber(icms)}</Text>
                </View>)
-         }
-         )}
+         })}
+         <View style={detailStyle.line} />
          <View style={detailStyle.totalContainer}>
-            <Text style={detailStyle.total}>Total</Text>
+            <Text style={detailStyle.totalBlank}>Totais</Text>
+            <Text style={detailStyle.total}>{formatNumber(sum(analiticoArr.map(a => a.valOper)))}</Text>
+            <Text style={detailStyle.total}>{formatNumber(sum(analiticoArr.map(a => a.bc)))}</Text>
             <Text style={detailStyle.total}>{formatNumber(sum(analiticoArr.map(a => a.icms)))}</Text>
          </View>
       </View>

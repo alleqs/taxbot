@@ -147,6 +147,33 @@ const detailStyle = StyleSheet.create({
       fontFamily: 'Helvetica-BoldOblique',
       fontSize: 12,
    },
+   itemContainer: {
+      flexDirection: 'row',
+      // justifyContent: 'space-between',
+      marginHorizontal: 40
+   },
+   itemCenter: {
+      flex: 12.5,
+      fontSize: 10,
+      marginTop: 3,
+      paddingVertical: 3,
+      textAlign: 'center',
+   },
+   itemLeft: {
+      flex: 80,
+      fontSize: 10,
+      marginTop: 3,
+      paddingVertical: 3,
+      textAlign: 'left',
+      textTransform: 'uppercase'
+   },
+   item: {
+      flex: 20,
+      fontSize: 10,
+      marginTop: 3,
+      paddingVertical: 3,
+      textAlign: 'right',
+   },
    totalContainer: {
       flexDirection: 'row',
       justifyContent: 'flex-end',
@@ -174,9 +201,9 @@ function getDetailTable(key: number, title: string, ajDetalhes: AjDetalhe[]) {
             </View>
          </View>
          {ajDetalhes.map(({ descr, val }, i) =>
-            <View key={i} style={{ ...styles.itemContainer, ...(i % 2 === 1) && { backgroundColor: '#f5f5f5' }, }}>
-               <Text style={styles.item}>{descr}</Text>
-               <Text style={styles.item}>{formatNumber(val)}</Text>
+            <View key={i} style={{ ...detailStyle.itemContainer, ...(i % 2 === 1) && { backgroundColor: '#f5f5f5' }, }}>
+               <Text style={detailStyle.itemLeft}>{descr}</Text>
+               <Text style={detailStyle.item}>{formatNumber(val)}</Text>
             </View>
          )}
          <View style={detailStyle.totalContainer}>
