@@ -1,6 +1,5 @@
 import type { CTe, CTeReg, FullCTe } from '../types'
 import { cfopMap } from '../constants/cfopMap';
-// import { getWb } from '../excel/nf';
 import { state } from '../store';
 import { formatCNPJ, formatCPF, formatIE, parser } from './common';
 import { getWb } from '../excel/ct';
@@ -10,7 +9,6 @@ import { modalMap } from '../constants/modalMap';
 function isFullCTe(obj: CTe | FullCTe): obj is FullCTe {
    return !!(obj as FullCTe).cteProc;
 }
-
 
 export async function xmlToCtRegs(file: File): Promise<CTeReg> {
    const xml = await file.text();
