@@ -11,7 +11,8 @@ const styles = StyleSheet.create({
 
    page: {
       flexDirection: 'column',
-      marginTop: 30,
+      marginTop: 20,
+      paddingBottom: 25,
    },
    headerContainer: {
       flexDirection: 'row',

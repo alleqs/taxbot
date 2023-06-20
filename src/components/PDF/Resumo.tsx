@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
    page: {
       flexDirection: 'column',
       marginTop: 15,
-      // paddingBottom: 20,
+      paddingBottom: 25,
       // marginBottom: 20,
    },
    line: {
@@ -67,10 +67,10 @@ export function PagResumo(infoContrib: InfoContrib, index: number, title: string
          </View>
 
          {getDetailTable(opsTribInt, `${index}.1. Operações Tributáveis`, `${index}.1.1. Operações Internas`)}
-         {getDetailTable(opsTribNaoInt, `${index}.1.2. Operações Interestaduais / Importação`)}
+         {getDetailTable(opsTribNaoInt, `${index}.1.2. Operações Interestaduais`)}
 
          {getDetailTable(opsNaoTribInt, `${index}.2. Operações Não Tributáveis`, `${index}.2.1. Operações Internas`)}
-         {getDetailTable(opsNaoTribNaoInt, `${index}.2.2. Operações Interestaduais / Importação`)}
+         {getDetailTable(opsNaoTribNaoInt, `${index}.2.2. Operações Interestaduais`)}
 
       </Page>
    );

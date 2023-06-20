@@ -4,7 +4,8 @@ import { pdf } from "@react-pdf/renderer";
 import { Resumo } from "../components/PDF/Resumo";
 
 const cstTrib = ['00', '10', '20', '70'];
-const cfopInt = ['1', '5'];
+const cfopInternas = ['1', '5'];
+const cfopInterestaduais = ['2', '6'];
 
 export function getGroupedOp(entradas: Analitico[], saidas: Analitico[]): ResumoAnalitico {
    const [entrTrib, entrNaoTrib] = partTrib(entradas);
@@ -33,9 +34,9 @@ export async function getSummaryPDF(infoContrib: InfoContrib, resumo: ResumoAnal
 }
 
 function partTrib(arr: Analitico[]): [Analitico[], Analitico[]] {
-   const [tributaveis, naoTrib] = partition(arr, ({ cst }) => {
+   const [tributaveis, naoTrib] = partition(arr, ({ cst, aliq }) => {
       const cstB = cst.substring(1);
-      return cstTrib.includes(cstB);
+      return aliq !== 0 && cstTrib.includes(cstB);
    });
    return [tributaveis, naoTrib];
 }
@@ -50,7 +51,11 @@ function partInt(arr: Analitico[]): [Summary[], Summary[]] {
    }))
    const [internas, naoInternas] = partition(summaryArr, ({ cfopAliq }) => {
       const cod = cfopAliq.charAt(0);
-      return cfopInt.includes(cod);
+      return cfopInternas.includes(cod);
    });
-   return [sortBy(internas, ({ cfopAliq }) => cfopAliq), sortBy(naoInternas, ({ cfopAliq }) => cfopAliq)];
+   const interestaduais = naoInternas.filter(({ cfopAliq }) => {
+      const cod = cfopAliq.charAt(0);
+      return cfopInterestaduais.includes(cod);
+   })
+   return [sortBy(internas, ({ cfopAliq }) => cfopAliq), sortBy(interestaduais, ({ cfopAliq }) => cfopAliq)];
 }
