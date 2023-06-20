@@ -1,19 +1,11 @@
-qde notas fiscais
-nfs emitidas em contingencia
-nfs em amb homologação
-sem protocolo de autorização
+CNPJ 
+CPF 
+IE 
+xNome 
+UF 
 
-   saídas,
-   ajDocFiscal,
-   aj,
-   estCred,
-   credAq,
-   ajCredDocFiscal,
-   ajCred,
-   estDeb,
-   saldoAcc,
-   saldoDev,
-   deducoes,
-   icmsARec,
-   saldoCredorProxPer,
-   recExtraAp,
+CNPJ 
+CPF 
+IE 
+xNome 
+

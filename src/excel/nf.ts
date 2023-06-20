@@ -1,9 +1,8 @@
 import Excel from 'exceljs';
-import type { RegFull } from '../types';
+import type { NfFullReg } from '../types';
 
 const wb = new Excel.Workbook();
 const ws = wb.addWorksheet('itens');
-
 
 ws.columns = [
    // { header: 'Ano Emissão', key: 'anoEmissao', width: 6 },
@@ -71,7 +70,7 @@ ws.columns = [
    { header: 'IPI', key: 'vIPI', width: 10, style: { numFmt: '#,##0.00;-#,##0.00;-' } },
 ];
 
-export function getWb(regs: RegFull[]) {
+export function getWb(regs: NfFullReg[]) {
 
    ws.addRows(regs);
    // ws.duplicateRow(1, 1, false);

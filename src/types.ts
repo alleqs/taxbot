@@ -3,6 +3,8 @@ export type Msgs = {
    msgs: string[]
 }
 
+//************NFs**************************** */
+
 export type NfStatus = {
    emConting: boolean
    homolog: boolean
@@ -127,7 +129,7 @@ export type NFe = {
    }
 }
 
-export type Reg = {
+export type NfReg = {
    dtEmissao: Date
    CNPJEmit: string | number | undefined
    IEEmit: string | number | undefined
@@ -196,8 +198,8 @@ export type ICMSItem = {
    vICMSSTDest?: number
 }
 
-export type MiniReg = Omit<Reg, 'vProdTot' | 'vDesc' | 'vFrete' | 'vSeg' | 'vOutro' | 'vBC' | 'vICMS' | 'vBCST' | 'vST' | 'vICMSDeson' | 'vIPI'>
-export type RegFull = Reg & Item
+export type NfMiniReg = Omit<NfReg, 'vProdTot' | 'vDesc' | 'vFrete' | 'vSeg' | 'vOutro' | 'vBC' | 'vICMS' | 'vBCST' | 'vST' | 'vICMSDeson' | 'vIPI'>
+export type NfFullReg = NfReg & Item
 
 //********************* EFD ***************************
 //Bloco C
@@ -265,4 +267,113 @@ export type ResumoAnalitico = {
    sdTribNaoInt: Summary[]
    sdNaoTribInt: Summary[]
    sdNaoTribNaoInt: Summary[]
+}
+
+/**************CTe********************* */
+
+type CTeContrib = {
+   CNPJ: string
+   CPF: string
+   IE: string
+   xNome: string
+   // enderReme: { UF: string }
+}
+
+export type FullCTe = {
+   cteProc: {
+      CTe: CTe['CTe']
+      protCTe: object
+   }
+}
+
+export type CTe = {
+   CTe: {
+      infCte: {
+         ide: {
+            cUF: string
+            cCT: string
+            CFOP: string
+            natOp: string
+            mod: string
+            serie: string
+            nCT: string
+            dhEmi: string
+            tpImp: string
+            tpEmis: string
+            cDV: string
+            tpAmb: string
+            tpCTe: string
+            procEmi: string
+            verProc: string
+            indGlobalizado: string
+            modal: string
+            tpServ: string
+            // cMunEnv: string
+            // xMunEnv: string
+            // UFEnv: string
+            // cMunIni: string
+            // xMunIni: string
+            // UFIni: string
+            // cMunFim: string
+            // xMunFim: string
+            // UFFim: string
+         }
+         compl: object
+         emit: CTeContrib & { enderEmit: { UF: string } }
+         rem: CTeContrib & { enderReme: { UF: string } }
+         exped: CTeContrib & { enderExped: { UF: string } }
+         receb: CTeContrib & { enderReceb: { UF: string } }
+         dest: CTeContrib & { enderDest: { UF: string } }
+         vPrest: { vTPrest: number }
+         imp: {
+            ICMS:
+            | { ICMS00: { CST: number, vBC: number, pICMS: number, vICMS: number } }
+            | { ICMS20: { CST: number, pRedBC: number, vBC: number, pICMS: number, vICMS: number } }
+            | { ICMS45: { CST: number } }
+            | { ICMS60: { CST: number, vBCSTRet: number, vICMSSTRet: number, pICMSSTRet: number, vCred: number } }
+            | { ICMS90: { CST: number, pRedBC: number, vBC: number, pICMS: number, vICMS: number, vCred: number } }
+            | { ICMSOutraUF: { CST: number, pRedBCOutraUF: number, vBCOutraUF: number, pICMSOutraUF: number, vICMSOutraUF: number } }
+            | { ICMSSN: { CST: number, vTotTrib: number } }
+            ICMSUFFim: {
+               vBCUFFim: number
+               pFCPUFFim: number
+               pICMSUFFim: number
+               pICMSInter: number
+               vFCPUFFim: number
+               vICMSUFFim: number
+               vICMSUFIni: number
+            }
+         }
+         infCTeNorm: {
+            infDoc: { infNFe: { chave: string } }
+            infModal: Record<'rodo' | 'aereo' | 'ferrov' | 'aquav' | 'duto' | 'multimodal', unknown>
+         }
+      }
+      infCTeSupl: object
+      Signature: object
+   }
+}
+
+export type CTeReg = {
+   dtEmissao: Date
+   nCT: string
+   chaveCT: string
+   modelo: string
+   natOp: string
+   modal: string
+
+   CNPJEmit: string | number | undefined
+   IEEmit: string | number | undefined
+   rsEmit: string | undefined
+   CPFEmit: string | number | undefined
+   ufEmit: string
+
+   CNPJDest: string | number | undefined
+   IEDest: string | number | undefined
+   rsDest: string | undefined
+   CPFDest: string | number | undefined
+   ufDest: string
+
+   vPrest: number
+   chaveNFe: string
 }

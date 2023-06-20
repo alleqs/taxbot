@@ -1,19 +1,17 @@
-import type { FullNFe, ICMS, ICMSItem, Item, MiniReg, NFe, NfStats, NfStatus, Reg, RegFull } from '../types'
+import type { FullNFe, ICMS, ICMSItem, Item, NfMiniReg, NFe, NfStats, NfStatus, NfReg, NfFullReg } from '../types'
 import { cfopMap } from '../constants/cfopMap';
 import { cnaeMap } from '../constants/cnaeMap';
 import { ncmMap } from '../constants/ncmMap';
 import { getWb } from '../excel/nf';
-import { XMLParser } from 'fast-xml-parser';
 import { state } from '../store';
-import { formatCNPJ, formatCPF, formatIE } from './common';
+import { formatCNPJ, formatCPF, formatIE, parser } from './common';
 
-const parser = new XMLParser();
 
 function isFullNFe(obj: NFe | FullNFe): obj is FullNFe {
    return !!(obj as FullNFe).nfeProc;
 }
 
-export async function nfeToItems(file: File): Promise<[RegFull[], NfStatus]> {
+export async function xmlToNfRegs(file: File): Promise<[NfFullReg[], NfStatus]> {
    const xml = await file.text();
    const _nfe: NFe | FullNFe = parser.parse(xml);
    const fullNF = isFullNFe(_nfe);
@@ -25,9 +23,6 @@ export async function nfeToItems(file: File): Promise<[RegFull[], NfStatus]> {
    const { CNPJ: CNPJDest, IE: IEDest, xNome: xNomeDest, CNAE: cnaeDest, CPF: CPFDest } = tpNF === 1 ? dest : emit;
    const [ufEmit, ufDest] = tpNF === 1 ? [emit.enderEmit.UF, dest.enderDest.UF] : [dest.enderDest.UF, emit.enderEmit.UF];
    const [anoEmissao, mesEmissao,] = dhEmi.split('-');
-   if (Array.isArray(_det) && _det.at(-1) === undefined) {
-      console.log('opa')
-   }
    const det = Array.isArray(_det) ? _det : [_det];
    const items: Item[] =
       det.map(({ prod: { NCM, CFOP, cProd, qCom, uCom, vUnCom, xProd, vProd }, imposto: { ICMS } }, i) =>
@@ -47,7 +42,7 @@ export async function nfeToItems(file: File): Promise<[RegFull[], NfStatus]> {
       semProtAut: !fullNF
    };
 
-   const miniReg: MiniReg = {
+   const NfMiniReg: NfMiniReg = {
       dtEmissao: new Date(dhEmi),
       CNPJEmit,
       IEEmit: ufEmit.toUpperCase() === 'AM' ? formatIE(IEEmit) : IEEmit,
@@ -73,8 +68,8 @@ export async function nfeToItems(file: File): Promise<[RegFull[], NfStatus]> {
    };
 
    const regs = items.map((item, i) => {
-      const reg: Reg = {
-         ...miniReg,
+      const reg: NfReg = {
+         ...NfMiniReg,
          vProdTot: i === 0 ? vProdTot : 0,
          vDesc: i === 0 ? vDesc : 0,
          vFrete: i === 0 ? vFrete : 0,
@@ -92,7 +87,7 @@ export async function nfeToItems(file: File): Promise<[RegFull[], NfStatus]> {
    return [regs, nfStatus];
 }
 
-export async function createNfSheet(regs: RegFull[], link: HTMLAnchorElement) {
+export async function createNfSheet(regs: NfFullReg[], link: HTMLAnchorElement) {
    const wb = getWb(regs);
    const buffer = await wb.xlsx.writeBuffer();
    const file = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -150,11 +145,6 @@ function getICMSReg(icms: ICMS | undefined): ICMSItem | {} {
    }
    return {};
 }
-
-
-
-
-
 
 
 // export function readNFes(fileList: FileList) {
