@@ -252,21 +252,21 @@ export type AjDetalhe = {
 }
 
 export type Summary = {
-   cfopAliq: `${number}-${number}`
+   cfopAliq: `${string}-${string}`
    valOper: number
    bc: number
    icms: number
 }
 
 export type ResumoAnalitico = {
-   entrTribInt: Summary[]
-   entrTribNaoInt: Summary[]
-   entrNaoTribInt: Summary[]
-   entrNaoTribNaoInt: Summary[]
-   sdTribInt: Summary[]
-   sdTribNaoInt: Summary[]
-   sdNaoTribInt: Summary[]
-   sdNaoTribNaoInt: Summary[]
+   entrTribInternas: Summary[]
+   entrTribInterest: Summary[]
+   entrNaoTribInternas: Summary[]
+   entrNaoTribInterest: Summary[]
+   sdTribInternas: Summary[]
+   sdTribInterest: Summary[]
+   sdNaoTribInternas: Summary[]
+   sdNaoTribInterest: Summary[]
 }
 
 /**************CTe********************* */
@@ -276,7 +276,6 @@ type CTeContrib = {
    CPF: string
    IE: string
    xNome: string
-   // enderReme: { UF: string }
 }
 
 export type FullCTe = {

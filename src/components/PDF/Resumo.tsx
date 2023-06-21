@@ -11,8 +11,7 @@ const styles = StyleSheet.create({
    page: {
       flexDirection: 'column',
       marginTop: 15,
-      paddingBottom: 25,
-      // marginBottom: 20,
+      paddingBottom: 35,
    },
    line: {
       marginHorizontal: 30,
@@ -39,12 +38,13 @@ const styles = StyleSheet.create({
    },
 });
 
-export function Resumo(infoContrib: InfoContrib, { entrTribInt, entrTribNaoInt, entrNaoTribInt, entrNaoTribNaoInt, sdTribInt, sdTribNaoInt, sdNaoTribInt, sdNaoTribNaoInt }: ResumoAnalitico) {
+export function Resumo(infoContrib: InfoContrib, { entrTribInternas, entrTribInterest, entrNaoTribInternas, entrNaoTribInterest,
+   sdTribInternas, sdTribInterest, sdNaoTribInternas, sdNaoTribInterest }: ResumoAnalitico) {
 
    return (
       <Document>
-         {PagResumo(infoContrib, 1, 'ENTRADAS', entrTribInt, entrTribNaoInt, entrNaoTribInt, entrNaoTribNaoInt)}
-         {PagResumo(infoContrib, 2, 'SAÍDAS', sdTribInt, sdTribNaoInt, sdNaoTribInt, sdNaoTribNaoInt)}
+         {PagResumo(infoContrib, 1, 'ENTRADAS', entrTribInternas, entrTribInterest, entrNaoTribInternas, entrNaoTribInterest)}
+         {PagResumo(infoContrib, 2, 'SAÍDAS', sdTribInternas, sdTribInterest, sdNaoTribInternas, sdNaoTribInterest)}
       </Document>
    );
 }
@@ -209,7 +209,8 @@ function getDetailTable(analiticoArr: Summary[], title: string, subTitle?: strin
             </View>
          </View>
          {analiticoArr.map(({ cfopAliq, valOper, bc, icms }, i) => {
-            const [cfop, aliq] = cfopAliq.split('-')
+            const [cfop, _aliq] = cfopAliq.split('-');
+            const aliq = +_aliq;
             return (
                <View key={i} style={{ ...detailStyle.itemContainer, ...(i % 2 === 1) && { backgroundColor: '#f5f5f5' }, }}>
                   <Text style={detailStyle.itemCenter}>{cfop}</Text>
