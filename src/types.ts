@@ -285,6 +285,16 @@ export type FullCTe = {
    }
 }
 
+export type ICMSCT =
+   | { ICMS00: { CST: number, vBC: number, pICMS: number, vICMS: number } }
+   | { ICMS20: { CST: number, pRedBC: number, vBC: number, pICMS: number, vICMS: number } }
+   | { ICMS45: { CST: number } }
+   | { ICMS60: { CST: number, vBCSTRet: number, vICMSSTRet: number, pICMSSTRet: number, vCred: number } }
+   | { ICMS90: { CST: number, pRedBC: number, vBC: number, pICMS: number, vICMS: number, vCred: number } }
+   | { ICMSOutraUF: { CST: number, pRedBCOutraUF: number, vBCOutraUF: number, pICMSOutraUF: number, vICMSOutraUF: number } }
+   | { ICMSSN: { CST: number, vTotTrib: number } }
+
+
 export type CTe = {
    CTe: {
       infCte: {
@@ -325,14 +335,7 @@ export type CTe = {
          dest: CTeContrib & { enderDest: { UF: string } }
          vPrest: { vTPrest: number }
          imp: {
-            ICMS:
-            | { ICMS00: { CST: number, vBC: number, pICMS: number, vICMS: number } }
-            | { ICMS20: { CST: number, pRedBC: number, vBC: number, pICMS: number, vICMS: number } }
-            | { ICMS45: { CST: number } }
-            | { ICMS60: { CST: number, vBCSTRet: number, vICMSSTRet: number, pICMSSTRet: number, vCred: number } }
-            | { ICMS90: { CST: number, pRedBC: number, vBC: number, pICMS: number, vICMS: number, vCred: number } }
-            | { ICMSOutraUF: { CST: number, pRedBCOutraUF: number, vBCOutraUF: number, pICMSOutraUF: number, vICMSOutraUF: number } }
-            | { ICMSSN: { CST: number, vTotTrib: number } }
+            ICMS: ICMSCT
             ICMSUFFim: {
                vBCUFFim: number
                pFCPUFFim: number
@@ -375,4 +378,9 @@ export type CTeReg = {
 
    vPrest: number
    chaveNFe: string
+
+   CST: number
+   vBC: number,
+   pICMS: number,
+   vICMS: number
 }

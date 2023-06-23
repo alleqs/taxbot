@@ -7,8 +7,8 @@ const ws = wb.addWorksheet('itens');
 
 ws.columns = [
    { header: 'Data Emissão', key: 'dtEmissao', width: 12, style: { numFmt: 'yyyy/mm/dd' } },
-   { header: 'Núm. CT', key: 'nCT', width: 10 },
-   { header: 'Chave CT', key: 'chaveCT', width: 45 },
+   { header: 'Núm. CTe', key: 'nCT', width: 10 },
+   { header: 'Chave CTe', key: 'chaveCT', width: 45 },
    { header: 'Mod.', key: 'modelo', width: 4 },
    { header: 'Natureza Operacao', key: 'natOp', width: 25 },
    { header: 'Modal', key: 'modal', width: 6 },
