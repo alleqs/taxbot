@@ -1,10 +1,19 @@
 import type { CTe, CTeReg, FullCTe, ICMSCT } from '../types'
-import { cfopMap } from '../constants/cfopMap';
-import { state } from '../store';
-import { formatCNPJ, formatCPF, formatIE, parser } from './common';
+// import { cfopMap } from '../constants/cfopMap';
+// import { state } from '../store';
+import { formatCNPJ, formatCPF, formatIE } from './common';
 import { getWb } from '../excel/ct';
 import { modalMap } from '../constants/modalMap';
+import { XMLParser } from 'fast-xml-parser';
 
+const options = {
+   parseTagValue: false,
+   tagValueProcessor: (tagName: string, tagValue: unknown) => {
+      if (tagName === 'chave') return String(tagValue);
+      return undefined;
+   }
+};
+const parser = new XMLParser(options);
 
 function isFullCTe(obj: CTe | FullCTe): obj is FullCTe {
    return !!(obj as FullCTe).cteProc;
@@ -19,8 +28,10 @@ export async function xmlToCtRegs(file: File): Promise<CTeReg> {
    const { ide: { dhEmi, mod, nCT: _nCT, natOp, cDV, cCT: _cNF, cUF, serie: _serie, tpAmb, tpEmis, tpCTe, modal },
       emit: { CNPJ: _CNPJEmit, IE: IEEmit, xNome: rsEmit, CPF: CPFEmit, enderEmit: { UF: ufEmit } },
       dest: { CNPJ: CNPJDest, IE: IEDest, xNome: rsDest, CPF: CPFDest, enderDest: { UF: ufDest } },
-      vPrest: { vTPrest }, infCTeNorm: { infDoc: { infNFe: { chave: chaveNFe } } }, imp: { ICMS }
+      vPrest: { vTPrest }, infCTeNorm: { infDoc: { infNFe } }, imp: { ICMS }
    } = cte;
+   const nfes = Array.isArray(infNFe) ? infNFe.map(({ chave }) => chave) : [infNFe.chave];
+   const chaveNFe = nfes.join(" ");
    const [anoEmissao, mesEmissao,] = dhEmi.split('-');
    const AAMM = `${anoEmissao.slice(-2)}${mesEmissao}`;
    const CNPJEmit = formatCNPJ(_CNPJEmit);
@@ -31,7 +42,7 @@ export async function xmlToCtRegs(file: File): Promise<CTeReg> {
 
    const cteReg: CTeReg = {
       dtEmissao: new Date(dhEmi),
-      nCT,
+      nCT: _nCT,
       chaveCT,
       modelo: mod,
       natOp,
@@ -50,7 +61,7 @@ export async function xmlToCtRegs(file: File): Promise<CTeReg> {
       ufDest,
 
       vPrest: +vTPrest,
-      chaveNFe: String(chaveNFe),
+      chaveNFe,
       ...toICMSReg(ICMS)
    };
    return cteReg;
@@ -67,11 +78,12 @@ export async function createCtSheet(regs: CTeReg[], link: HTMLAnchorElement) {
 function toICMSReg(icms: ICMSCT): { CST: number } & Record<'vBC' | 'pICMS' | 'vICMS', number> {
 
    if ('ICMS00' in icms) {
-      const { CST, pICMS, vBC, vICMS } = icms.ICMS00
-      return { CST, vBC, pICMS, vICMS };
+      const { CST, pICMS, vBC, vICMS } = icms.ICMS00;
+      // const a = { CST, vBC: +vBC, pICMS: +pICMS, vICMS: +vICMS }
+      return { CST, vBC: +vBC, pICMS: +pICMS, vICMS: +vICMS };
    } else if ('ICMS20' in icms) {
       const { CST, pICMS, vBC, vICMS } = icms.ICMS20;
-      return { CST, vBC, pICMS, vICMS };
+      return { CST, vBC: +vBC, pICMS: +pICMS, vICMS: +vICMS };
    } else if ('ICMS45' in icms) {
       const { CST } = icms.ICMS45;
       return { CST, vBC: 0, pICMS: 0, vICMS: 0 };
@@ -80,10 +92,10 @@ function toICMSReg(icms: ICMSCT): { CST: number } & Record<'vBC' | 'pICMS' | 'vI
       return { CST, vBC: 0, pICMS: 0, vICMS: 0 };
    } else if ('ICMS90' in icms) {
       const { CST, pICMS, vBC, vICMS } = icms.ICMS90;
-      return { CST, vBC, pICMS, vICMS };
+      return { CST, vBC: +vBC, pICMS: +pICMS, vICMS: +vICMS };
    } else if ('ICMSOutraUF' in icms) {
       const { CST, pICMSOutraUF, vBCOutraUF, vICMSOutraUF } = icms.ICMSOutraUF;
-      return { CST, vBC: vBCOutraUF, pICMS: pICMSOutraUF, vICMS: vICMSOutraUF };
+      return { CST, vBC: +vBCOutraUF, pICMS: +pICMSOutraUF, vICMS: +vICMSOutraUF };
    } else {
       const { CST } = icms.ICMSSN;
       return { CST, vBC: 0, pICMS: 0, vICMS: 0 };

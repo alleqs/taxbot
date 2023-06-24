@@ -4,8 +4,10 @@ import { cnaeMap } from '../constants/cnaeMap';
 import { ncmMap } from '../constants/ncmMap';
 import { getWb } from '../excel/nf';
 import { state } from '../store';
-import { formatCNPJ, formatCPF, formatIE, parser } from './common';
+import { formatCNPJ, formatCPF, formatIE } from './common';
+import { XMLParser } from 'fast-xml-parser';
 
+const parser = new XMLParser();
 
 function isFullNFe(obj: NFe | FullNFe): obj is FullNFe {
    return !!(obj as FullNFe).nfeProc;

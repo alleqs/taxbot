@@ -4,7 +4,6 @@ import type { CTeReg } from '../types';
 const wb = new Excel.Workbook();
 const ws = wb.addWorksheet('itens');
 
-
 ws.columns = [
    { header: 'Data Emissão', key: 'dtEmissao', width: 12, style: { numFmt: 'yyyy/mm/dd' } },
    { header: 'Núm. CTe', key: 'nCT', width: 10 },
@@ -37,33 +36,14 @@ ws.columns = [
    { header: 'Chave NFe', key: 'chaveNFe', width: 45 },
    { header: 'CST', key: 'CST', width: 10 },
    { header: 'Base de Cálc.', key: 'vBC', width: 16, style: { numFmt: '#,##0.00;-#,##0.00;-' } },
-   { header: 'Alíquota', key: 'pICMS', width: 8 },
+   { header: 'Alíquota', key: 'pICMS', width: 8, style: { numFmt: '#,##0;-#,##0;-' } },
    { header: 'ICMS', key: 'vICMS', width: 16, style: { numFmt: '#,##0.00;-#,##0.00;-' } },
 ];
 
 
 export function getWb(regs: CTeReg[]) {
-
    ws.addRows(regs);
-   // ws.duplicateRow(1, 1, false);
-   // ws.insertRow(1, { a: 1 });
-   // const row1 = ws.getRow(1);
-   // const row2 = ws.getRow(2);
-   // row1.font = { bold: true };
-   // row1.alignment = { horizontal: 'center' };
-   // row2.font = { bold: true };
-   // ws.getCell('A1').value = 'Nota Fiscal';
-   // ws.mergeCells('A1:H1');
-   // ws.getCell('I1').value = 'Emitente';
-   // ws.mergeCells('I1:O1');
-   // ws.getCell('P1').value = 'Destinatário';
-   // ws.mergeCells('P1:V1');
-   // ws.getCell('W1').value = 'Itens';
-   // ws.mergeCells('W1:AG1');
-   // ws.getCell('AH1').value = 'ICMS Itens';
-   // ws.mergeCells('AH1:AS1');
-   // ws.getCell('AT1').value = 'Totais';
-   // ws.mergeCells('AT1:BC1');
+   ws.getRow(1).font = { bold: true };
 
    return wb;
 }

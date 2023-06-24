@@ -347,7 +347,7 @@ export type CTe = {
             }
          }
          infCTeNorm: {
-            infDoc: { infNFe: { chave: string } }
+            infDoc: { infNFe: { chave: string } | { chave: string }[] }
             infModal: Record<'rodo' | 'aereo' | 'ferrov' | 'aquav' | 'duto' | 'multimodal', unknown>
          }
       }

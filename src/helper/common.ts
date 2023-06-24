@@ -1,8 +1,7 @@
 import JSZip from "jszip";
 import { InfoContrib } from "../types";
-import { XMLParser } from 'fast-xml-parser';
 
-export const parser = new XMLParser();
+
 const zip = new JSZip();
 
 export function formatDate(date: Date) {
