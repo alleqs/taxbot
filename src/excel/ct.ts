@@ -35,6 +35,10 @@ ws.columns = [
 
    { header: 'Valor Prestação', key: 'vPrest', width: 10, style: { numFmt: '#,##0.00;-#,##0.00;-' } },
    { header: 'Chave NFe', key: 'chaveNFe', width: 45 },
+   { header: 'CST', key: 'CST', width: 10 },
+   { header: 'Base de Cálc.', key: 'vBC', width: 16, style: { numFmt: '#,##0.00;-#,##0.00;-' } },
+   { header: 'Alíquota', key: 'pICMS', width: 8 },
+   { header: 'ICMS', key: 'vICMS', width: 16, style: { numFmt: '#,##0.00;-#,##0.00;-' } },
 ];
 
 
