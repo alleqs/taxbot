@@ -12,18 +12,19 @@ export async function getEfdRegistries(fileList: FileList): Promise<[Analitico[]
    let cnpj: string | undefined = undefined;
    let minDate: Date | undefined = undefined;
    let maxDate: Date | undefined = undefined;
+
    for (let i = 0; i < len; i++) {
       const file = fileList[i];
       const efd = await getFileContent(file);
       const lines = efd.split('\r\n');
       const { iniEscrit, fimEscrit, nome, IE, cnpj: _cnpj } = getInfoContrib(lines);
-      const analitico = getAnaliticoRegs(lines);
       razaoSocial ??= nome;
       inscEst ??= IE;
       cnpj ??= _cnpj;
       minDate = min([minDate, iniEscrit]);
       maxDate = max([maxDate, fimEscrit]);
       const anoMes = `${iniEscrit.getFullYear()}-${iniEscrit.getMonth() + 1}`;
+      const analitico = getAnaliticoRegs(lines);
       analiticoMap[anoMes] = analitico;
    }
 

@@ -317,6 +317,7 @@ export type CTe = {
             indGlobalizado: string
             modal: string
             tpServ: string
+            toma3: { toma: number }
             // cMunEnv: string
             // xMunEnv: string
             // UFEnv: string
@@ -363,6 +364,7 @@ export type CTeReg = {
    modelo: string
    natOp: string
    modal: string
+   tomador: string
 
    CNPJEmit: string | number | undefined
    IEEmit: string | number | undefined

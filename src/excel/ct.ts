@@ -11,6 +11,7 @@ ws.columns = [
    { header: 'Mod.', key: 'modelo', width: 4 },
    { header: 'Natureza Operacao', key: 'natOp', width: 25 },
    { header: 'Modal', key: 'modal', width: 6 },
+   { header: 'Tomador', key: 'tomador', width: 8 },
 
    // { header: 'Tipo NF', key: 'tpNF', width: 10 },
    // { header: 'Ambiente', key: 'tpAmb', width: 10 },

@@ -5,6 +5,7 @@ import { formatCNPJ, formatCPF, formatIE } from './common';
 import { getWb } from '../excel/ct';
 import { modalMap } from '../constants/modalMap';
 import { XMLParser } from 'fast-xml-parser';
+import { tomadorMap } from '../constants/tomaDorMap';
 
 const options = {
    parseTagValue: false,
@@ -25,7 +26,7 @@ export async function xmlToCtRegs(file: File): Promise<CTeReg> {
    const fullCT = isFullCTe(_cte);
    const cte = fullCT ? _cte.cteProc.CTe.infCte : _cte.CTe.infCte;
 
-   const { ide: { dhEmi, mod, nCT: _nCT, natOp, cDV, cCT: _cNF, cUF, serie: _serie, tpAmb, tpEmis, tpCTe, modal },
+   const { ide: { dhEmi, mod, nCT: _nCT, natOp, cDV, cCT: _cNF, cUF, serie: _serie, tpAmb, tpEmis, tpCTe, modal, toma3: { toma } },
       emit: { CNPJ: _CNPJEmit, IE: IEEmit, xNome: rsEmit, CPF: CPFEmit, enderEmit: { UF: ufEmit } },
       dest: { CNPJ: CNPJDest, IE: IEDest, xNome: rsDest, CPF: CPFDest, enderDest: { UF: ufDest } },
       vPrest: { vTPrest }, infCTeNorm: { infDoc: { infNFe } }, imp: { ICMS }
@@ -47,6 +48,7 @@ export async function xmlToCtRegs(file: File): Promise<CTeReg> {
       modelo: mod,
       natOp,
       modal: modalMap[+modal],
+      tomador: tomadorMap[toma],
 
       CNPJEmit,
       IEEmit: String(IEEmit),

@@ -26,9 +26,9 @@ export async function getEfdDetalheApuracao(fileList: FileList): Promise<[ApOpPr
       cnpj ??= _cnpj;
       minDate = min([minDate, iniEscrit]);
       maxDate = max([maxDate, fimEscrit]);
-      const [apOpPropria, _ajDetalhes] = getApOpProprias(lines);
+      const [apOpPropria, ajDetalhes] = getApOpProprias(lines);
       apOpProprias.push(apOpPropria);
-      ajDetalhes.push(..._ajDetalhes);
+      ajDetalhes.push(...ajDetalhes);
    }
 
    const infoContrib = getValidatedInfoContrib(razaoSocial, inscEst, minDate, maxDate, cnpj);

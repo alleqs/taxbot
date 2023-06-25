@@ -22,7 +22,7 @@ export const BigButton: FC<Props> = ({ _key, title, subTitle, iconFrom, iconTo, 
             <img className='' width={48} height={48} src={iconTo} alt='ícone NFe' />
          </div>
 
-         <input id={_key} directory="" webkitdirectory="" type="file" className="hidden" multiple onChange={onChange} />
+         <input id={_key} type="file" className="hidden" multiple onChange={onChange} />
       </label>
    );
 };
