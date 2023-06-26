@@ -4,7 +4,7 @@ import { cnaeMap } from '../constants/cnaeMap';
 import { ncmMap } from '../constants/ncmMap';
 import { getWb } from '../excel/nf';
 import { state } from '../store';
-import { formatCNPJ, formatCPF, formatIE } from './common';
+import { formatCNPJ, formatCPF, formatIE, getFileContent } from './common';
 import { XMLParser } from 'fast-xml-parser';
 
 const parser = new XMLParser();
@@ -13,80 +13,96 @@ function isFullNFe(obj: NFe | FullNFe): obj is FullNFe {
    return !!(obj as FullNFe).nfeProc;
 }
 
-export async function xmlToNfRegs(file: File): Promise<[NfFullReg[], NfStatus]> {
-   const xml = await file.text();
-   const _nfe: NFe | FullNFe = parser.parse(xml);
-   const fullNF = isFullNFe(_nfe);
-   const nfe = fullNF ? _nfe.nfeProc.NFe.infNFe : _nfe.NFe.infNFe;
-   const { ide: { dhEmi, mod, nNF: _nNF, natOp, cDV, cNF: _cNF, cUF, serie: _serie, tpAmb, tpEmis, tpNF }, det: _det, emit, dest,
-      total: { ICMSTot: { vProd: vProdTot, vDesc, vSeg, vFrete, vOutro, vBC, vICMS, vBCST, vST, vICMSDeson, vIPI } },
-   } = nfe;
-   const { CNPJ: _CNPJEmit, IE: IEEmit, xNome: xNomeEmit, CNAE: cnaeEmit, CPF: CPFEmit } = tpNF === 1 ? emit : dest;
-   const { CNPJ: CNPJDest, IE: IEDest, xNome: xNomeDest, CNAE: cnaeDest, CPF: CPFDest } = tpNF === 1 ? dest : emit;
-   const [ufEmit, ufDest] = tpNF === 1 ? [emit.enderEmit.UF, dest.enderDest.UF] : [dest.enderDest.UF, emit.enderEmit.UF];
-   const [anoEmissao, mesEmissao,] = dhEmi.split('-');
-   const det = Array.isArray(_det) ? _det : [_det];
-   const items: Item[] =
-      det.map(({ prod: { NCM, CFOP, cProd, qCom, uCom, vUnCom, xProd, vProd }, imposto: { ICMS } }, i) =>
-      ({
-         NCM, CFOP, numSeqItem: i + 1, codProd: cProd, descProd: xProd, qCom, uCom, vUnCom, vProd, descCFOP:
-            cfopMap[CFOP] ?? '', descNCM: ncmMap[NCM] ?? '', ...getICMSReg(ICMS)
-      }));
-   const AAMM = `${anoEmissao.slice(-2)}${mesEmissao}`;
-   const CNPJEmit = formatCNPJ(_CNPJEmit);
-   const nNF = String(_nNF).padStart(9, '0')
-   const serie = String(_serie).padStart(3, '0');
-   const cNF = String(_cNF).padStart(8, '0');
-   const chaveNF = `${cUF}${AAMM}${String(emit.CNPJ).padStart(14, '0')}${mod}${serie}${nNF}${tpEmis}${cNF}${cDV}`;
-   const nfStatus: NfStatus = {
-      emConting: tpEmis !== 1,
-      homolog: tpAmb === 2,
-      semProtAut: !fullNF
-   };
+export async function xmlToNfRegs(file: File, accObjLength: number): Promise<[NfFullReg[], number]> {
+   const regs: NfFullReg[] = [];
+   const nfStats: NfStats = { emConting: 0, homolog: 0, semProtAut: 0, numNfs: 0 };
 
-   const NfMiniReg: NfMiniReg = {
-      dtEmissao: new Date(dhEmi),
-      CNPJEmit,
-      IEEmit: ufEmit.toUpperCase() === 'AM' ? formatIE(IEEmit) : IEEmit,
-      rsEmit: xNomeEmit,
-      CPFEmit: formatCPF(CPFEmit),
-      ufEmit,
-      cnaeEmit: cnaeEmit,
-      descCnaeEmit: cnaeEmit ? cnaeMap[cnaeEmit] : '',
-      modelo: mod,
-      numNF: _nNF,
-      CNPJDest: formatCNPJ(CNPJDest),
-      IEDest: ufDest.toUpperCase() === 'AM' ? formatIE(IEDest) : IEDest && String(IEDest),
-      rsDest: xNomeDest,
-      CPFDest: formatCPF(CPFDest),
-      ufDest,
-      cnaeDest,
-      descCnaeDest: cnaeDest ? cnaeMap[cnaeDest] : '',
-      natOp,
-      tpAmb: tpAmb === 1 ? 'produção' : 'homologação',
-      tpEmis: tpEmis === 1 ? 'normal' : 'contingência',
-      tpNF: tpNF === 1 ? 'saída' : 'entrada',
-      chaveNF: String(chaveNF),
-   };
+   const [xmls, newAccObjLength] = await getFileContent(file, accObjLength);
 
-   const regs = items.map((item, i) => {
-      const reg: NfReg = {
-         ...NfMiniReg,
-         vProdTot: i === 0 ? vProdTot : 0,
-         vDesc: i === 0 ? vDesc : 0,
-         vFrete: i === 0 ? vFrete : 0,
-         vSeg: i === 0 ? vSeg : 0,
-         vOutro: i === 0 ? vOutro : 0,
-         vBC: i === 0 ? vBC : 0,
-         vICMS: i === 0 ? vICMS : 0,
-         vBCST: i === 0 ? vBCST : 0,
-         vST: i === 0 ? vST : 0,
-         vICMSDeson: i === 0 ? vICMSDeson : 0,
-         vIPI: i === 0 ? vIPI : 0,
-      }
-      return { ...reg, ...item };
-   });
-   return [regs, nfStatus];
+   for (const xml of xmls) {
+
+      const _nfe: NFe | FullNFe = parser.parse(xml);
+      const fullNF = isFullNFe(_nfe);
+      const nfe = fullNF ? _nfe.nfeProc.NFe.infNFe : _nfe.NFe.infNFe;
+      const { ide: { dhEmi, mod, nNF: _nNF, natOp, cDV, cNF: _cNF, cUF, serie: _serie, tpAmb, tpEmis, tpNF }, det: _det, emit, dest,
+         total: { ICMSTot: { vProd: vProdTot, vDesc, vSeg, vFrete, vOutro, vBC, vICMS, vBCST, vST, vICMSDeson, vIPI } },
+      } = nfe;
+      const { CNPJ: _CNPJEmit, IE: IEEmit, xNome: xNomeEmit, CNAE: cnaeEmit, CPF: CPFEmit } = tpNF === 1 ? emit : dest;
+      const { CNPJ: CNPJDest, IE: IEDest, xNome: xNomeDest, CNAE: cnaeDest, CPF: CPFDest } = tpNF === 1 ? dest : emit;
+      const [ufEmit, ufDest] = tpNF === 1 ? [emit.enderEmit.UF, dest.enderDest.UF] : [dest.enderDest.UF, emit.enderEmit.UF];
+      const [anoEmissao, mesEmissao,] = dhEmi.split('-');
+      const det = Array.isArray(_det) ? _det : [_det];
+      const items: Item[] =
+         det.map(({ prod: { NCM, CFOP, cProd, qCom, uCom, vUnCom, xProd, vProd }, imposto: { ICMS } }, i) =>
+         ({
+            NCM, CFOP, numSeqItem: i + 1, codProd: cProd, descProd: xProd, qCom, uCom, vUnCom, vProd, descCFOP:
+               cfopMap[CFOP] ?? '', descNCM: ncmMap[NCM] ?? '', ...getICMSReg(ICMS)
+         }));
+      const AAMM = `${anoEmissao.slice(-2)}${mesEmissao}`;
+      const CNPJEmit = formatCNPJ(_CNPJEmit);
+      const nNF = String(_nNF).padStart(9, '0')
+      const serie = String(_serie).padStart(3, '0');
+      const cNF = String(_cNF).padStart(8, '0');
+      const chaveNF = `${cUF}${AAMM}${String(emit.CNPJ).padStart(14, '0')}${mod}${serie}${nNF}${tpEmis}${cNF}${cDV}`;
+      const nfStatus: NfStatus = {
+         emConting: tpEmis !== 1,
+         homolog: tpAmb === 2,
+         semProtAut: !fullNF
+      };
+      updateStats(nfStatus, nfStats);
+
+      const NfMiniReg: NfMiniReg = {
+         dtEmissao: new Date(dhEmi),
+         CNPJEmit,
+         IEEmit: ufEmit.toUpperCase() === 'AM' ? formatIE(IEEmit) : IEEmit,
+         rsEmit: xNomeEmit,
+         CPFEmit: formatCPF(CPFEmit),
+         ufEmit,
+         cnaeEmit: cnaeEmit,
+         descCnaeEmit: cnaeEmit ? cnaeMap[cnaeEmit] : '',
+         modelo: mod,
+         numNF: _nNF,
+         CNPJDest: formatCNPJ(CNPJDest),
+         IEDest: ufDest.toUpperCase() === 'AM' ? formatIE(IEDest) : IEDest && String(IEDest),
+         rsDest: xNomeDest,
+         CPFDest: formatCPF(CPFDest),
+         ufDest,
+         cnaeDest,
+         descCnaeDest: cnaeDest ? cnaeMap[cnaeDest] : '',
+         natOp,
+         tpAmb: tpAmb === 1 ? 'produção' : 'homologação',
+         tpEmis: tpEmis === 1 ? 'normal' : 'contingência',
+         tpNF: tpNF === 1 ? 'saída' : 'entrada',
+         chaveNF: String(chaveNF),
+      };
+
+      const monthRegs = items.map((item, i) => {
+         const reg: NfReg = {
+            ...NfMiniReg,
+            vProdTot: i === 0 ? vProdTot : 0,
+            vDesc: i === 0 ? vDesc : 0,
+            vFrete: i === 0 ? vFrete : 0,
+            vSeg: i === 0 ? vSeg : 0,
+            vOutro: i === 0 ? vOutro : 0,
+            vBC: i === 0 ? vBC : 0,
+            vICMS: i === 0 ? vICMS : 0,
+            vBCST: i === 0 ? vBCST : 0,
+            vST: i === 0 ? vST : 0,
+            vICMSDeson: i === 0 ? vICMSDeson : 0,
+            vIPI: i === 0 ? vIPI : 0,
+         }
+         return { ...reg, ...item };
+      });
+      regs.push(...monthRegs);
+      // yield ([monthRegs, nfStats, len] as [NfFullReg[], NfStats, number])
+   }
+   return [regs, newAccObjLength];
+}
+
+function updateStats({ emConting, homolog, semProtAut }: NfStatus, stats: NfStats) {
+   if (emConting) stats.emConting++;
+   if (homolog) stats.homolog++;
+   if (semProtAut) stats.semProtAut++;
 }
 
 export async function createNfSheet(regs: NfFullReg[], link: HTMLAnchorElement) {

@@ -214,7 +214,7 @@ function getDetailTable(analiticoArr: Summary[], title: string, subTitle?: strin
             return (
                <View key={i} style={{ ...detailStyle.itemContainer, ...(i % 2 === 1) && { backgroundColor: '#f5f5f5' }, }}>
                   <Text style={detailStyle.itemCenter}>{cfop}</Text>
-                  <Text style={detailStyle.itemDesc}>{cfopMap[+cfop]}</Text>
+                  <Text style={detailStyle.itemDesc}>{cfopMap[+cfop] ?? ''}</Text>
                   <Text style={detailStyle.itemAliq}>{aliq}</Text>
                   <Text style={detailStyle.itemValor}>{formatNumber(valOper)}</Text>
                   <Text style={detailStyle.itemValor}>{formatNumber(bc)}</Text>

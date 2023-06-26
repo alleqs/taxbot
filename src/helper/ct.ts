@@ -1,13 +1,13 @@
-import type { CTe, CTeReg, FullCTe, ICMSCT } from '../types'
+import type { CTe, CTeReg, FullCTe, ICMS, ICMSCT } from '../types'
 // import { cfopMap } from '../constants/cfopMap';
 // import { state } from '../store';
-import { formatCNPJ, formatCPF, formatIE } from './common';
+import { formatCNPJ, formatCPF, formatIE, getFileContent } from './common';
 import { getWb } from '../excel/ct';
-import { modalMap } from '../constants/modalMap';
+import { modalMap, tomadorMap, tpCTeMap } from '../constants/cte';
 import { XMLParser } from 'fast-xml-parser';
-import { tomadorMap } from '../constants/tomaDorMap';
 
 const options = {
+   ignoreAttributes: false,
    parseTagValue: false,
    tagValueProcessor: (tagName: string, tagValue: unknown) => {
       if (tagName === 'chave') return String(tagValue);
@@ -20,53 +20,68 @@ function isFullCTe(obj: CTe | FullCTe): obj is FullCTe {
    return !!(obj as FullCTe).cteProc;
 }
 
-export async function xmlToCtRegs(file: File): Promise<CTeReg> {
-   const xml = await file.text();
-   const _cte: CTe | FullCTe = parser.parse(xml);
-   const fullCT = isFullCTe(_cte);
-   const cte = fullCT ? _cte.cteProc.CTe.infCte : _cte.CTe.infCte;
+export async function xmlToCtRegs(file: File, accObjLength: number): Promise<[CTeReg[], number]> {
 
-   const { ide: { dhEmi, mod, nCT: _nCT, natOp, cDV, cCT: _cNF, cUF, serie: _serie, tpAmb, tpEmis, tpCTe, modal, toma3: { toma } },
-      emit: { CNPJ: _CNPJEmit, IE: IEEmit, xNome: rsEmit, CPF: CPFEmit, enderEmit: { UF: ufEmit } },
-      dest: { CNPJ: CNPJDest, IE: IEDest, xNome: rsDest, CPF: CPFDest, enderDest: { UF: ufDest } },
-      vPrest: { vTPrest }, infCTeNorm: { infDoc: { infNFe } }, imp: { ICMS }
-   } = cte;
-   const nfes = Array.isArray(infNFe) ? infNFe.map(({ chave }) => chave) : [infNFe.chave];
-   const chaveNFe = nfes.join(" ");
-   const [anoEmissao, mesEmissao,] = dhEmi.split('-');
-   const AAMM = `${anoEmissao.slice(-2)}${mesEmissao}`;
-   const CNPJEmit = formatCNPJ(_CNPJEmit);
-   const nCT = String(_nCT).padStart(9, '0')
-   const serie = String(_serie).padStart(3, '0');
-   const cCT = String(_cNF).padStart(8, '0');
-   const chaveCT = `${cUF}${AAMM}${String(_CNPJEmit).padStart(14, '0')}${mod}${serie}${nCT}${tpEmis}${cCT}${cDV}`;
+   const regs: CTeReg[] = [];
+   const [xmls, newAccObjLength] = await getFileContent(file, accObjLength);
 
-   const cteReg: CTeReg = {
-      dtEmissao: new Date(dhEmi),
-      nCT: _nCT,
-      chaveCT,
-      modelo: mod,
-      natOp,
-      modal: modalMap[+modal],
-      tomador: tomadorMap[toma],
+   for (const xml of xmls) {
+      const _cte: CTe | FullCTe = parser.parse(xml);
+      const fullCT = isFullCTe(_cte);
+      const cte = fullCT ? _cte.cteProc.CTe.infCte : _cte.CTe.infCte;
 
-      CNPJEmit,
-      IEEmit: String(IEEmit),
-      rsEmit,
-      CPFEmit,
-      ufEmit,
+      const { ide: { dhEmi, mod, nCT: _nCT, natOp, cDV, cCT: _cNF, cUF, serie: _serie, tpAmb, tpEmis, tpCTe, modal },
+         emit: { CNPJ: _CNPJEmit, IE: IEEmit, xNome: rsEmit, CPF: CPFEmit, enderEmit: { UF: ufEmit } },
+         dest: { CNPJ: CNPJDest, IE: IEDest, xNome: rsDest, CPF: CPFDest, enderDest: { UF: ufDest } },
+         vPrest: { vTPrest }, imp: { ICMS }
+      } = cte;
+      //infCTeNorm: { infDoc: { infNFe } }
+      const { toma: codTomador } = 'toma3' in cte.ide ? cte.ide.toma3 : cte.ide.toma4;
+      const nfes =
+         'infCTeNorm' in cte ?
+            Array.isArray(cte.infCTeNorm.infDoc.infNFe)
+               ? cte.infCTeNorm.infDoc.infNFe.map(({ chave }) => chave)
+               : [cte.infCTeNorm.infDoc.infNFe.chave]
+            : [];
+      const chaveNFe = nfes.join(" ");
+      const [anoEmissao, mesEmissao,] = dhEmi.split('-');
+      const AAMM = `${anoEmissao.slice(-2)}${mesEmissao}`;
+      const CNPJEmit = formatCNPJ(_CNPJEmit);
+      const nCT = String(_nCT).padStart(9, '0')
+      const serie = String(_serie).padStart(3, '0');
+      const cCT = String(_cNF).padStart(8, '0');
+      const chaveCT = `${cUF}${AAMM}${String(_CNPJEmit).padStart(14, '0')}${mod}${serie}${nCT}${tpEmis}${cCT}${cDV}`;
 
-      CNPJDest: formatCNPJ(CNPJDest),
-      IEDest,
-      rsDest,
-      CPFDest,
-      ufDest,
+      const cteReg: CTeReg = {
+         dtEmissao: new Date(dhEmi),
+         nCT: _nCT,
+         chaveCT,
+         modelo: mod,
+         natOp,
+         modal: modalMap[+modal] ?? '',
+         tomador: tomadorMap[codTomador] ?? '',
+         tpCTe: tpCTeMap[+tpCTe] ?? '',
 
-      vPrest: +vTPrest,
-      chaveNFe,
-      ...toICMSReg(ICMS)
-   };
-   return cteReg;
+         CNPJEmit,
+         IEEmit: String(IEEmit),
+         rsEmit,
+         CPFEmit,
+         ufEmit,
+         transpOptanteSN: optanteSN(ICMS) ? 'sim' : '-',
+
+         CNPJDest: formatCNPJ(CNPJDest),
+         IEDest,
+         rsDest,
+         CPFDest,
+         ufDest,
+
+         vPrest: +vTPrest,
+         chaveNFe,
+         ...toICMSReg(ICMS)
+      };
+      regs.push(cteReg)
+   }
+   return [regs, newAccObjLength]
 }
 
 export async function createCtSheet(regs: CTeReg[], link: HTMLAnchorElement) {
@@ -81,7 +96,6 @@ function toICMSReg(icms: ICMSCT): { CST: number } & Record<'vBC' | 'pICMS' | 'vI
 
    if ('ICMS00' in icms) {
       const { CST, pICMS, vBC, vICMS } = icms.ICMS00;
-      // const a = { CST, vBC: +vBC, pICMS: +pICMS, vICMS: +vICMS }
       return { CST, vBC: +vBC, pICMS: +pICMS, vICMS: +vICMS };
    } else if ('ICMS20' in icms) {
       const { CST, pICMS, vBC, vICMS } = icms.ICMS20;
@@ -102,4 +116,8 @@ function toICMSReg(icms: ICMSCT): { CST: number } & Record<'vBC' | 'pICMS' | 'vI
       const { CST } = icms.ICMSSN;
       return { CST, vBC: 0, pICMS: 0, vICMS: 0 };
    }
+}
+
+function optanteSN(icms: ICMSCT) {
+   return 'ICMSSN' in icms && icms.ICMSSN.indSN === '1';
 }

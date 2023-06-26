@@ -29,9 +29,11 @@ export const App: FC = () => {
     const fileList = cloneFileList(_fileList);
     setCalculating(true);
     console.time("Time");
+    setLoading(true);
     const [regs, nfStats] = await getNfRegistries(fileList.files);
     console.timeEnd("Time");
     await createNfSheet(regs, link);
+    setLoading(false);
     setCalculating(false);
     setFileType('planilha');
     formatNfStats(nfStats);
@@ -120,7 +122,7 @@ export const App: FC = () => {
           </a>
         </div>
       </div>
-      <ProgressBar perc={perc} loading={calculating} />
+      {/* <ProgressBar perc={perc} loading={calculating} /> */}
       <Loader loading={loading} />
     </div>
   );

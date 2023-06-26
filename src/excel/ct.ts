@@ -12,8 +12,7 @@ ws.columns = [
    { header: 'Natureza Operacao', key: 'natOp', width: 25 },
    { header: 'Modal', key: 'modal', width: 6 },
    { header: 'Tomador', key: 'tomador', width: 8 },
-
-   // { header: 'Tipo NF', key: 'tpNF', width: 10 },
+   { header: 'Tipo CTe', key: 'tpCTe', width: 8 },
    // { header: 'Ambiente', key: 'tpAmb', width: 10 },
    // { header: 'Tipo Emissão', key: 'tpEmis', width: 10 },
 
@@ -22,19 +21,16 @@ ws.columns = [
    { header: 'Razão Social Emitente', key: 'rsEmit', width: 30 },
    { header: 'CPF Emitente', key: 'CPFEmit' },
    { header: 'UF Emitente', key: 'ufEmit', width: 4 },
-   // { header: 'CNAE Emitente', key: 'cnaeEmit' },
-   // { header: 'Descr. CNAE Emitente', key: 'descCnaeEmit' },
+   { header: 'Transp. Optante SN', key: 'transpOptanteSN', width: 6 },
 
    { header: 'CNPJ Destinatário', key: 'CNPJDest', width: 16 },
    { header: 'IE Destinatário', key: 'IEDest', width: 13 },
    { header: 'Razão Social Destinatário', key: 'rsDest', width: 25 },
    { header: 'CPF Destinatário', key: 'CPFDest', width: 8 },
    { header: 'UF Destinatário', key: 'ufDest', width: 4, },
-   // { header: 'CNAE Destinatário', key: 'cnaeDest', width: 8 },
-   // { header: 'Descr. CNAE Destinatário', key: 'descCnaeDest' },
 
    { header: 'Valor Prestação', key: 'vPrest', width: 10, style: { numFmt: '#,##0.00;-#,##0.00;-' } },
-   { header: 'Chave NFe', key: 'chaveNFe', width: 45 },
+   { header: 'Chave(s) NFe(s)', key: 'chaveNFe', width: 45 },
    { header: 'CST', key: 'CST', width: 10 },
    { header: 'Base de Cálc.', key: 'vBC', width: 16, style: { numFmt: '#,##0.00;-#,##0.00;-' } },
    { header: 'Alíquota', key: 'pICMS', width: 8, style: { numFmt: '#,##0;-#,##0;-' } },

@@ -292,7 +292,7 @@ export type ICMSCT =
    | { ICMS60: { CST: number, vBCSTRet: number, vICMSSTRet: number, pICMSSTRet: number, vCred: number } }
    | { ICMS90: { CST: number, pRedBC: number, vBC: number, pICMS: number, vICMS: number, vCred: number } }
    | { ICMSOutraUF: { CST: number, pRedBCOutraUF: number, vBCOutraUF: number, pICMSOutraUF: number, vICMSOutraUF: number } }
-   | { ICMSSN: { CST: number, vTotTrib: number } }
+   | { ICMSSN: { CST: number, indSN: string, vTotTrib: number } }
 
 
 export type CTe = {
@@ -317,7 +317,7 @@ export type CTe = {
             indGlobalizado: string
             modal: string
             tpServ: string
-            toma3: { toma: number }
+
             // cMunEnv: string
             // xMunEnv: string
             // UFEnv: string
@@ -327,7 +327,7 @@ export type CTe = {
             // cMunFim: string
             // xMunFim: string
             // UFFim: string
-         }
+         } & ({ toma3: { toma: number } } | { toma4: { toma: number } })
          compl: object
          emit: CTeContrib & { enderEmit: { UF: string } }
          rem: CTeContrib & { enderReme: { UF: string } }
@@ -347,11 +347,9 @@ export type CTe = {
                vICMSUFIni: number
             }
          }
-         infCTeNorm: {
-            infDoc: { infNFe: { chave: string } | { chave: string }[] }
-            infModal: Record<'rodo' | 'aereo' | 'ferrov' | 'aquav' | 'duto' | 'multimodal', unknown>
-         }
-      }
+
+      } & ({ infCTeNorm: { infDoc: { infNFe: { chave: string } | { chave: string }[] } } }
+         | { infCteComp: { chCTe: string } })
       infCTeSupl: object
       Signature: object
    }
@@ -365,12 +363,14 @@ export type CTeReg = {
    natOp: string
    modal: string
    tomador: string
+   tpCTe: string
 
    CNPJEmit: string | number | undefined
    IEEmit: string | number | undefined
    rsEmit: string | undefined
    CPFEmit: string | number | undefined
    ufEmit: string
+   transpOptanteSN: string
 
    CNPJDest: string | number | undefined
    IEDest: string | number | undefined
