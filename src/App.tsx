@@ -15,10 +15,10 @@ import { createCtSheet } from './helper/ct';
 
 export const App: FC = () => {
 
-  const [calculating, setCalculating] = useState(false);
+  // const [calculating, setCalculating] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fileType, setFileType] = useState<'planilha' | 'PDF' | undefined>(undefined);
-  const { perc, getNfRegistries } = useNfRegs();
+  const { getNfRegistries } = useNfRegs();
   const { getCtRegistries } = useCtRegs();
 
   const linkRef = useRef<HTMLAnchorElement>(null);
@@ -27,14 +27,14 @@ export const App: FC = () => {
     const link = linkRef.current;
     if (!_fileList || !link) return;
     const fileList = cloneFileList(_fileList);
-    setCalculating(true);
+    // setCalculating(true);
     console.time("Time");
     setLoading(true);
     const [regs, nfStats] = await getNfRegistries(fileList.files);
     console.timeEnd("Time");
     await createNfSheet(regs, link);
     setLoading(false);
-    setCalculating(false);
+    // setCalculating(false);
     setFileType('planilha');
     formatNfStats(nfStats);
   }
@@ -43,21 +43,23 @@ export const App: FC = () => {
     const link = linkRef.current;
     if (!_fileList || !link) return;
     const fileList = cloneFileList(_fileList);
-    setCalculating(true);
+    // setCalculating(true);
     console.time("Time");
     const regs = await getCtRegistries(fileList.files);
     console.timeEnd("Time");
     await createCtSheet(regs, link);
-    setCalculating(false);
+    // setCalculating(false);
     setFileType('planilha');
   }
 
-  async function handleEfdIOChange(fileList: FileList | null) {
+  async function handleEfdIOChange(_fileList: FileList | null) {
     const link = linkRef.current;
-    if (!fileList || !link) return;
+    if (!_fileList || !link) return;
+    const fileList = cloneFileList(_fileList);
+
     setLoading(true);
     console.time("Time");
-    const [entradas, saidas, infoContrib] = await getEfdRegistries(fileList)
+    const [entradas, saidas, infoContrib] = await getEfdRegistries(fileList.files)
     console.timeEnd("Time");
     // console.log(JSON.stringify(apOpPropria))
     await createEfdSheet(entradas, saidas, infoContrib, link);
@@ -65,12 +67,13 @@ export const App: FC = () => {
     setFileType('planilha');
   }
 
-  async function handleEfdApChange(fileList: FileList | null) {
+  async function handleEfdApChange(_fileList: FileList | null) {
     const link = linkRef.current;
-    if (!fileList || !link) return;
+    if (!_fileList || !link) return;
+    const fileList = cloneFileList(_fileList);
     setLoading(true);
     console.time("Time");
-    const [apOpPropriaAgregado, tpAjMap, infoContrib] = await getEfdDetalheApuracao(fileList);
+    const [apOpPropriaAgregado, tpAjMap, infoContrib] = await getEfdDetalheApuracao(fileList.files);
     console.timeEnd("Time");
     await getApPDF(infoContrib, apOpPropriaAgregado, tpAjMap, link);
     // console.log(JSON.stringify(apOpPropria))
@@ -79,12 +82,13 @@ export const App: FC = () => {
     setFileType('PDF');
   }
 
-  async function handleEfdResChange(fileList: FileList | null) {
+  async function handleEfdResChange(_fileList: FileList | null) {
     const link = linkRef.current;
-    if (!fileList || !link) return;
+    if (!_fileList || !link) return;
+    const fileList = cloneFileList(_fileList);
     setLoading(true);
     console.time("Time");
-    const [entradas, saidas, infoContrib] = await getEfdRegistries(fileList);
+    const [entradas, saidas, infoContrib] = await getEfdRegistries(fileList.files);
     const resumo = getGroupedOp(entradas, saidas);
     await getSummaryPDF(infoContrib, resumo, link);
     console.timeEnd("Time");

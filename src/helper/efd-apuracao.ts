@@ -8,27 +8,31 @@ import { Apuracao } from "../components/PDF/Apuracao";
 export async function getEfdDetalheApuracao(fileList: FileList): Promise<[ApOpPropria, Record<number, AjDetalhe[]>, InfoContrib]> {
    const apOpProprias: ApOpPropria[] = [];
    const ajDetalhes: AjDetalhe[] = [];
-   const len = fileList.length;
 
    let razaoSocial: string | undefined = undefined;
    let inscEst: string | undefined = undefined;
    let cnpj: string | undefined = undefined;
    let minDate: Date | undefined = undefined;
    let maxDate: Date | undefined = undefined;
+   let accObjLength = 0;
 
-   for (let i = 0; i < len; i++) {
-      const file = fileList[i];
-      const efd = await getFileContent(file);
-      const lines = efd.split('\r\n');
-      const { iniEscrit, fimEscrit, nome, IE, cnpj: _cnpj } = getInfoContrib(lines);
-      razaoSocial ??= nome;
-      inscEst ??= IE;
-      cnpj ??= _cnpj;
-      minDate = min([minDate, iniEscrit]);
-      maxDate = max([maxDate, fimEscrit]);
-      const [apOpPropria, ajDetalhes] = getApOpProprias(lines);
-      apOpProprias.push(apOpPropria);
-      ajDetalhes.push(...ajDetalhes);
+   for (const file of fileList) {
+      // const file = fileList[i];
+      const [efds, newAccObjLength] = await getFileContent(file, accObjLength);
+      accObjLength = newAccObjLength;
+      for (const efd of efds) {
+         // const efd = await getFileContent(file);
+         const lines = efd.split('\r\n');
+         const { iniEscrit, fimEscrit, nome, IE, cnpj: _cnpj } = getInfoContrib(lines);
+         razaoSocial ??= nome;
+         inscEst ??= IE;
+         cnpj ??= _cnpj;
+         minDate = min([minDate, iniEscrit]);
+         maxDate = max([maxDate, fimEscrit]);
+         const [apOpPropria, ajDetalhes] = getApOpProprias(lines);
+         apOpProprias.push(apOpPropria);
+         ajDetalhes.push(...ajDetalhes);
+      }
    }
 
    const infoContrib = getValidatedInfoContrib(razaoSocial, inscEst, minDate, maxDate, cnpj);

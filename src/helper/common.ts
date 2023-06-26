@@ -106,8 +106,8 @@ export function getInfoContrib(lines: string[]): InfoContrib {
       nome,
       cnpj,
       IE,
-      iniEscrit: new Date(+dtIni.substring(4, 10), +dtIni.substring(2, 4) - 1),
-      fimEscrit: new Date(+dtFim.substring(4, 10), +dtFim.substring(2, 4) - 1),
+      iniEscrit: new Date(+dtIni.substring(4), +dtIni.substring(2, 4) - 1, +dtIni.substring(0, 2)),
+      fimEscrit: new Date(+dtFim.substring(4), +dtFim.substring(2, 4) - 1, +dtFim.substring(0, 2)),
    };
 }
 
