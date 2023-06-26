@@ -277,13 +277,13 @@ type CTeContrib = {
    IE: string
    xNome: string
 }
-
-export type FullCTe = {
-   cteProc: {
-      CTe: CTe['CTe']
-      protCTe: object
-   }
+type CTeProc = {
+   CTe: CTe['CTe']
+   protCTe: object
 }
+
+//Alguns softwares emissores utilizam erroneamente a tag "procCTe" em vez de "cteProc"
+export type FullCTe = { cteProc: CTeProc } | { procCTe: CTeProc }
 
 export type ICMSCT =
    | { ICMS00: { CST: number, vBC: number, pICMS: number, vICMS: number } }
@@ -333,7 +333,7 @@ export type CTe = {
          rem: CTeContrib & { enderReme: { UF: string } }
          exped: CTeContrib & { enderExped: { UF: string } }
          receb: CTeContrib & { enderReceb: { UF: string } }
-         dest: CTeContrib & { enderDest: { UF: string } }
+         dest?: CTeContrib & { enderDest: { UF: string } }
          vPrest: { vTPrest: number }
          imp: {
             ICMS: ICMSCT
@@ -348,7 +348,7 @@ export type CTe = {
             }
          }
 
-      } & ({ infCTeNorm: { infDoc: { infNFe: { chave: string } | { chave: string }[] } } }
+      } & ({ infCTeNorm: { infDoc: ({ infNFe: { chave: string } | { chave: string }[] } | { infOutros: unknown }) } }
          | { infCteComp: { chCTe: string } })
       infCTeSupl: object
       Signature: object

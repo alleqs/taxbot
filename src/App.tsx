@@ -98,7 +98,7 @@ export const App: FC = () => {
   }
 
   return (
-    <div className='bg-gray-100'>
+    <div className='h-screen bg-gray-100'>
       <NavBar />
       {/* <h1 className="flex justify-center text-gray-600 text-4xl mt-20 font-['BakbakOne']">Conversor para formato<span className='font-semibold text-green-900'>&nbsp;Excel</span></h1> */}
       <div className="flex justify-center text-gray-600 text-4xl mt-20 font-['BakbakOne']">
@@ -106,7 +106,7 @@ export const App: FC = () => {
           <TipeWrite />
         </div>
       </div>
-      <div className='h-screen flex flex-col items-center space-y-8'>
+      <div className=' flex flex-col items-center space-y-8'>
         <div className='space-y-8'>
           <div className='grid grid-cols-3 gap-10 mt-24'>
             <BigButton _key='NFe' title='NFe' iconFrom='xml.svg' iconTo='excel.png' onChange={e => handlerWrap(handleNFChange, e)} />

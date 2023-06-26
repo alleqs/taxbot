@@ -17,7 +17,8 @@ const options = {
 const parser = new XMLParser(options);
 
 function isFullCTe(obj: CTe | FullCTe): obj is FullCTe {
-   return !!(obj as FullCTe).cteProc;
+   // return !!(obj as FullCTe).cteProc;
+   return ('cteProc' in obj) || ('procCTe' in obj);
 }
 
 export async function xmlToCtRegs(file: File, accObjLength: number): Promise<[CTeReg[], number]> {
@@ -28,7 +29,17 @@ export async function xmlToCtRegs(file: File, accObjLength: number): Promise<[CT
    for (const xml of xmls) {
       const _cte: CTe | FullCTe = parser.parse(xml);
       const fullCT = isFullCTe(_cte);
-      const cte = fullCT ? _cte.cteProc.CTe.infCte : _cte.CTe.infCte;
+      const cte = fullCT ? Object.values(_cte)[0].CTe.infCte : _cte.CTe.infCte;
+
+      // try {
+      //    const { ide: { dhEmi, mod, nCT: _nCT, natOp, cDV, cCT: _cNF, cUF, serie: _serie, tpAmb, tpEmis, tpCTe, modal },
+      //       emit: { CNPJ: _CNPJEmit, IE: IEEmit, xNome: rsEmit, CPF: CPFEmit, enderEmit: { UF: ufEmit } },
+      //       dest: { CNPJ: CNPJDest, IE: IEDest, xNome: rsDest, CPF: CPFDest, enderDest: { UF: ufDest } },
+      //       vPrest: { vTPrest }, imp: { ICMS }
+      //    } = cte;
+      // } catch (err) {
+      //    console.log('err', err)
+      // }
 
       const { ide: { dhEmi, mod, nCT: _nCT, natOp, cDV, cCT: _cNF, cUF, serie: _serie, tpAmb, tpEmis, tpCTe, modal },
          emit: { CNPJ: _CNPJEmit, IE: IEEmit, xNome: rsEmit, CPF: CPFEmit, enderEmit: { UF: ufEmit } },
@@ -38,7 +49,7 @@ export async function xmlToCtRegs(file: File, accObjLength: number): Promise<[CT
       //infCTeNorm: { infDoc: { infNFe } }
       const { toma: codTomador } = 'toma3' in cte.ide ? cte.ide.toma3 : cte.ide.toma4;
       const nfes =
-         'infCTeNorm' in cte ?
+         'infCTeNorm' in cte && 'infNFe' in cte.infCTeNorm.infDoc ?
             Array.isArray(cte.infCTeNorm.infDoc.infNFe)
                ? cte.infCTeNorm.infDoc.infNFe.map(({ chave }) => chave)
                : [cte.infCTeNorm.infDoc.infNFe.chave]
