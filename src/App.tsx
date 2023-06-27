@@ -44,10 +44,12 @@ export const App: FC = () => {
     if (!_fileList || !link) return;
     const fileList = cloneFileList(_fileList);
     // setCalculating(true);
+    setLoading(true);
     console.time("Time");
     const regs = await getCtRegistries(fileList.files);
     console.timeEnd("Time");
     await createCtSheet(regs, link);
+    setLoading(false);
     // setCalculating(false);
     setFileType('planilha');
   }

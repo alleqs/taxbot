@@ -14,12 +14,10 @@ export async function getEfdDetalheApuracao(fileList: FileList): Promise<[ApOpPr
    let cnpj: string | undefined = undefined;
    let minDate: Date | undefined = undefined;
    let maxDate: Date | undefined = undefined;
-   let accObjLength = 0;
 
    for (const file of fileList) {
       // const file = fileList[i];
-      const [efds, newAccObjLength] = await getFileContent(file, accObjLength);
-      accObjLength = newAccObjLength;
+      const efds = await getFileContent(file);
       for (const efd of efds) {
          // const efd = await getFileContent(file);
          const lines = efd.split('\r\n');

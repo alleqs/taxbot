@@ -13,11 +13,11 @@ function isFullNFe(obj: NFe | FullNFe): obj is FullNFe {
    return !!(obj as FullNFe).nfeProc;
 }
 
-export async function xmlToNfRegs(file: File, accObjLength: number): Promise<[NfFullReg[], number]> {
+export async function xmlToNfRegs(file: File): Promise<NfFullReg[]> {
    const regs: NfFullReg[] = [];
    const nfStats: NfStats = { emConting: 0, homolog: 0, semProtAut: 0, numNfs: 0 };
 
-   const [xmls, newAccObjLength] = await getFileContent(file, accObjLength);
+   const [xmls, newAccObjLength] = await getFileContent(file);
 
    for (const xml of xmls) {
 
@@ -96,7 +96,7 @@ export async function xmlToNfRegs(file: File, accObjLength: number): Promise<[Nf
       regs.push(...monthRegs);
       // yield ([monthRegs, nfStats, len] as [NfFullReg[], NfStats, number])
    }
-   return [regs, newAccObjLength];
+   return regs;
 }
 
 function updateStats({ emConting, homolog, semProtAut }: NfStatus, stats: NfStats) {

@@ -1,8 +1,6 @@
 import JSZip from "jszip";
 import { InfoContrib } from "../types";
 
-const zip = new JSZip();
-
 export function formatDate(date: Date) {
    return date.toLocaleString('pt-BR', { year: 'numeric', month: '2-digit', day: '2-digit', });
 }
@@ -56,16 +54,15 @@ export function formatNumber(n: number) {
 //    }
 // }
 
-export async function getFileContent(file: File, accObjLength: number): Promise<[string[], number]> {
+export async function getFileContent(file: File): Promise<string[]> {
    if (file.type.startsWith('text')) {
-      return [[await file.text()], 1];
+      return [await file.text()];
       // return readFile(file);
    } else if (file.type === 'application/x-zip-compressed') {
       const buffer = await file.arrayBuffer();
+      const zip = new JSZip();
       const obj = await zip.loadAsync(buffer);
-      // const txtArr: string[] = [];
-      const values = Object.values(obj.files).slice(accObjLength);
-      const p = values.map(f => f.async('uint8array'));
+      const p = Object.values(obj.files).map(f => f.async('uint8array'));
       const uint8arrays = await Promise.all(p);
       const txtArr = uint8arrays.map(uint8ArrayToString);
 
@@ -78,7 +75,7 @@ export async function getFileContent(file: File, accObjLength: number): Promise<
       // const uint8Arr = await Object.values(obj.files).at(-1)?.async('uint8array');
       // if (!uint8Arr) throw new Error("Arquivo não encontrado");
       // const txt = uint8ArrayToString(uint8Arr);
-      return [txtArr, values.length];
+      return txtArr;
    }
    throw new Error("formato de arquivo não reconhecido");
 }

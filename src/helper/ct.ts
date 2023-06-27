@@ -1,4 +1,4 @@
-import type { CTe, CTeReg, FullCTe, ICMS, ICMSCT } from '../types'
+import type { CTe, CTeReg, FullCTe, ICMS, ICMSCT, InfCte } from '../types'
 // import { cfopMap } from '../constants/cfopMap';
 // import { state } from '../store';
 import { formatCNPJ, formatCPF, formatIE, getFileContent } from './common';
@@ -17,39 +17,37 @@ const options = {
 const parser = new XMLParser(options);
 
 function isFullCTe(obj: CTe | FullCTe): obj is FullCTe {
-   // return !!(obj as FullCTe).cteProc;
    return ('cteProc' in obj) || ('procCTe' in obj);
 }
 
-export async function xmlToCtRegs(file: File, accObjLength: number): Promise<[CTeReg[], number]> {
+export async function xmlToCtRegs(file: File): Promise<CTeReg[]> {
 
    const regs: CTeReg[] = [];
-   const [xmls, newAccObjLength] = await getFileContent(file, accObjLength);
+   const xmls = await getFileContent(file);
 
    for (const xml of xmls) {
       const _cte: CTe | FullCTe = parser.parse(xml);
       const fullCT = isFullCTe(_cte);
-      const cte = fullCT ? Object.values(_cte)[0].CTe.infCte : _cte.CTe.infCte;
 
+      // const cte: InfCte = fullCT ? Object.values(_cte)[0].CTe.infCte : _cte.CTe.infCte;
       // try {
-      //    const { ide: { dhEmi, mod, nCT: _nCT, natOp, cDV, cCT: _cNF, cUF, serie: _serie, tpAmb, tpEmis, tpCTe, modal },
-      //       emit: { CNPJ: _CNPJEmit, IE: IEEmit, xNome: rsEmit, CPF: CPFEmit, enderEmit: { UF: ufEmit } },
-      //       dest: { CNPJ: CNPJDest, IE: IEDest, xNome: rsDest, CPF: CPFDest, enderDest: { UF: ufDest } },
-      //       vPrest: { vTPrest }, imp: { ICMS }
-      //    } = cte;
-      // } catch (err) {
-      //    console.log('err', err)
+      //    const cte: InfCte = fullCT ? (_cte as any)[findKey(_cte)].CTe.infCte : _cte.CTe.infCte;
+
+      // } catch (error) {
+      //    console.log('error', error)
       // }
+      const cte: InfCte = fullCT ? (_cte as any)[findKey(_cte)].CTe.infCte : _cte.CTe.infCte;
+
 
       const { ide: { dhEmi, mod, nCT: _nCT, natOp, cDV, cCT: _cNF, cUF, serie: _serie, tpAmb, tpEmis, tpCTe, modal },
          emit: { CNPJ: _CNPJEmit, IE: IEEmit, xNome: rsEmit, CPF: CPFEmit, enderEmit: { UF: ufEmit } },
-         dest: { CNPJ: CNPJDest, IE: IEDest, xNome: rsDest, CPF: CPFDest, enderDest: { UF: ufDest } },
-         vPrest: { vTPrest }, imp: { ICMS }
+         // dest: { CNPJ: CNPJDest, IE: IEDest, xNome: rsDest, CPF: CPFDest, enderDest: { UF: ufDest } },
+         vPrest: { vTPrest }, imp: { ICMS }, dest
       } = cte;
-      //infCTeNorm: { infDoc: { infNFe } }
       const { toma: codTomador } = 'toma3' in cte.ide ? cte.ide.toma3 : cte.ide.toma4;
+
       const nfes =
-         'infCTeNorm' in cte && 'infNFe' in cte.infCTeNorm.infDoc ?
+         'infCTeNorm' in cte && 'infDoc' in cte.infCTeNorm && 'infNFe' in cte.infCTeNorm.infDoc! ?
             Array.isArray(cte.infCTeNorm.infDoc.infNFe)
                ? cte.infCTeNorm.infDoc.infNFe.map(({ chave }) => chave)
                : [cte.infCTeNorm.infDoc.infNFe.chave]
@@ -80,11 +78,11 @@ export async function xmlToCtRegs(file: File, accObjLength: number): Promise<[CT
          ufEmit,
          transpOptanteSN: optanteSN(ICMS) ? 'sim' : '-',
 
-         CNPJDest: formatCNPJ(CNPJDest),
-         IEDest,
-         rsDest,
-         CPFDest,
-         ufDest,
+         CNPJDest: dest ? formatCNPJ(dest.CNPJ) : '',
+         IEDest: dest?.IE ?? '',
+         rsDest: dest?.xNome ?? '',
+         CPFDest: dest?.CPF ?? '',
+         ufDest: dest?.enderDest.UF ?? '',
 
          vPrest: +vTPrest,
          chaveNFe,
@@ -92,7 +90,7 @@ export async function xmlToCtRegs(file: File, accObjLength: number): Promise<[CT
       };
       regs.push(cteReg)
    }
-   return [regs, newAccObjLength]
+   return regs
 }
 
 export async function createCtSheet(regs: CTeReg[], link: HTMLAnchorElement) {
@@ -131,4 +129,8 @@ function toICMSReg(icms: ICMSCT): { CST: number } & Record<'vBC' | 'pICMS' | 'vI
 
 function optanteSN(icms: ICMSCT) {
    return 'ICMSSN' in icms && icms.ICMSSN.indSN === '1';
+}
+
+function findKey(cte: FullCTe): 'cteProc' | 'procCTe' {
+   return Object.keys(cte).find(k => k === 'cteProc' || k === 'procCTe')! as 'cteProc' | 'procCTe';
 }

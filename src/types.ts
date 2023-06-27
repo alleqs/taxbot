@@ -282,6 +282,8 @@ type CTeProc = {
    protCTe: object
 }
 
+export type InfCte = CTe['CTe']['infCte']
+
 //Alguns softwares emissores utilizam erroneamente a tag "procCTe" em vez de "cteProc"
 export type FullCTe = { cteProc: CTeProc } | { procCTe: CTeProc }
 
@@ -348,7 +350,7 @@ export type CTe = {
             }
          }
 
-      } & ({ infCTeNorm: { infDoc: ({ infNFe: { chave: string } | { chave: string }[] } | { infOutros: unknown }) } }
+      } & ({ infCTeNorm: { infDoc?: ({ infNFe: { chave: string } | { chave: string }[] } | { infOutros: unknown }) } }
          | { infCteComp: { chCTe: string } })
       infCTeSupl: object
       Signature: object

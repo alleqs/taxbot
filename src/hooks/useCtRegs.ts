@@ -8,26 +8,26 @@ export function useCtRegs() {
    const regs: CTeReg[] = [];
 
    async function getCtRegistries(fileList: FileList): Promise<CTeReg[]> {
-      const txtLen = fileList.length;
-      console.log('len', txtLen);
-      let accObjLength = 0;
+      // const txtLen = fileList.length;
+      // console.log('len', txtLen);
+      // let accObjLength = 0;
       // const nfStats: NfStats = { emConting: 0, homolog: 0, semProtAut: 0, numNfs: 0 };
-      return new Promise<CTeReg[]>(async r => {
-         for (const file of fileList) {
-            // const file = fileList[i];
-            // if (!file) continue;
+      // return new Promise<CTeReg[]>(async r => {
+      for (const file of fileList) {
+         // const file = fileList[i];
+         // if (!file) continue;
 
-            // nfStats.numNfs++;
-            console.time("Time2");
-            const [monthRegs, newAccObjLength] = await xmlToCtRegs(file, accObjLength);
-            console.timeEnd("Time2");
-            accObjLength = newAccObjLength;
-            // updateStats(nfStatus, nfStats);
-            regs.push(...monthRegs);
-            // setPerc(Math.round((i + 1) / len * 100));
-         }
-         r(regs);
-      });
+         // nfStats.numNfs++;
+         console.time("Time2");
+         const monthRegs = await xmlToCtRegs(file);
+         console.timeEnd("Time2");
+         // accObjLength = newAccObjLength;
+         // updateStats(nfStatus, nfStats);
+         regs.push(...monthRegs);
+         // setPerc(Math.round((i + 1) / len * 100));
+      }
+      return regs;
+      // });
    }
 
    return { perc, getCtRegistries }

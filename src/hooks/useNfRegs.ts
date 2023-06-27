@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import type { NfStats, NfStatus, NfFullReg } from '../types';
 import { xmlToNfRegs } from '../helper/nf';
-import { max } from 'lodash';
 
 export function useNfRegs() {
 
@@ -12,7 +11,7 @@ export function useNfRegs() {
       const txtLen = fileList.length;
       console.log('len', txtLen);
       const nfStats: NfStats = { emConting: 0, homolog: 0, semProtAut: 0, numNfs: 0 };
-      let accObjLength = 0;
+      // let accObjLength = 0;
       // for (let i = 0; i < len; i++) {
       //    const file = fileList[i];
       //    if (!file) continue;
@@ -38,9 +37,8 @@ export function useNfRegs() {
             // }
             console.time("Time2");
 
-            const [regs, newAccObjLength] = await xmlToNfRegs(file, accObjLength);
+            const regs = await xmlToNfRegs(file);
             console.timeEnd("Time2");
-            accObjLength = newAccObjLength;
             nfStats.numNfs++;
             // updateStats(nfStatus, nfStats);
             fullRegs.push(...regs)

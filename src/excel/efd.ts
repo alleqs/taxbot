@@ -2,17 +2,6 @@ import Excel from 'exceljs';
 import type { Analitico, InfoContrib } from '../types';
 import { formatDate, formatIE } from '../helper/common';
 
-const wb = new Excel.Workbook();
-const wsEntrada = wb.addWorksheet('entradas');
-const wsSaida = wb.addWorksheet('saidas');
-
-const entrRow = wsEntrada.getRow(1);
-entrRow.font = { bold: true };
-entrRow.alignment = { horizontal: 'center' };
-const exRow = wsSaida.getRow(1);
-exRow.font = { bold: true };
-exRow.alignment = { horizontal: 'center' };
-
 const cols = [
    { header: 'Per. Apuração', key: 'anoMes', width: 13, style: { numFmt: 'yyyy-mm' } },
    { header: 'CST', key: 'cst', width: 8 },
@@ -26,8 +15,19 @@ const cols = [
    { header: 'Redução BC ICMS', key: 'redBc', width: 20, style: { numFmt: '#,##0.00;-#,##0.00;-' } },
 ];
 
-
 export function getWb(entradas: Analitico[], saidas: Analitico[], { nome, IE, iniEscrit, fimEscrit }: InfoContrib) {
+
+   const wb = new Excel.Workbook();
+   const wsEntrada = wb.addWorksheet('entradas');
+   const wsSaida = wb.addWorksheet('saidas');
+
+   const entrRow = wsEntrada.getRow(1);
+   entrRow.font = { bold: true };
+   entrRow.alignment = { horizontal: 'center' };
+   const exRow = wsSaida.getRow(1);
+   exRow.font = { bold: true };
+   exRow.alignment = { horizontal: 'center' };
+
    const titulo = `${nome}     IE: ${formatIE(IE)}     Per. apuração: ${formatDate(iniEscrit)} a ${formatDate(fimEscrit)}`;
    wsEntrada.columns = cols;
    wsSaida.columns = cols;
