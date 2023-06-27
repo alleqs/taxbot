@@ -18,6 +18,7 @@ function setColumns(ws: Excel.Worksheet) {
       { header: 'Chave CTe', key: 'chaveCT', width: 45 },
       { header: 'Mod.', key: 'modelo', width: 4 },
       { header: 'Natureza Operacao', key: 'natOp', width: 25 },
+      { header: 'CFOP', key: 'CFOP', width: 8 },
       { header: 'Modal', key: 'modal', width: 6 },
       { header: 'Tomador', key: 'tomador', width: 8 },
       { header: 'Tipo CTe', key: 'tpCTe', width: 8 },

@@ -1,5 +1,5 @@
 import type { CTe, CTeReg, FullCTe, ICMS, ICMSCT, InfCte } from '../types'
-// import { cfopMap } from '../constants/cfopMap';
+import { cfopMap } from '../constants/cfopMap';
 // import { state } from '../store';
 import { formatCNPJ, formatCPF, formatIE, getFileContent } from './common';
 import { getWb } from '../excel/ct';
@@ -39,7 +39,7 @@ export async function xmlToCtRegs(file: File): Promise<CTeReg[]> {
       const cte: InfCte = fullCT ? (_cte as any)[findKey(_cte)].CTe.infCte : _cte.CTe.infCte;
 
 
-      const { ide: { dhEmi, mod, nCT: _nCT, natOp, cDV, cCT: _cNF, cUF, serie: _serie, tpAmb, tpEmis, tpCTe, modal },
+      const { ide: { dhEmi, mod, nCT: _nCT, natOp, cDV, cCT: _cNF, cUF, serie: _serie, tpAmb, tpEmis, tpCTe, modal, CFOP },
          emit: { CNPJ: _CNPJEmit, IE: IEEmit, xNome: rsEmit, CPF: CPFEmit, enderEmit: { UF: ufEmit } },
          // dest: { CNPJ: CNPJDest, IE: IEDest, xNome: rsDest, CPF: CPFDest, enderDest: { UF: ufDest } },
          vPrest: { vTPrest }, imp: { ICMS }, dest
@@ -70,6 +70,7 @@ export async function xmlToCtRegs(file: File): Promise<CTeReg[]> {
          modal: modalMap[+modal] ?? '',
          tomador: tomadorMap[codTomador] ?? '',
          tpCTe: tpCTeMap[+tpCTe] ?? '',
+         CFOP: +CFOP,
 
          CNPJEmit,
          IEEmit: String(IEEmit),

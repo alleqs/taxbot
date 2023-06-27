@@ -363,6 +363,7 @@ export type CTeReg = {
    chaveCT: string
    modelo: string
    natOp: string
+   CFOP: number
    modal: string
    tomador: string
    tpCTe: string
